@@ -221,3 +221,6 @@ __marimo__/
 docs
 docs/*.md
 docs/*.pdf
+
+# Local Codex planning notes
+IMPLEMENTATION_PLAN.md

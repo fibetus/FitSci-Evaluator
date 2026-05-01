@@ -1,10 +1,9 @@
 import asyncio
 import argparse
-import json
 from ..domain.models.study import Study, Population
 from ..domain.services.scoring import ScoringService
 
-async def main():
+async def async_main():
     parser = argparse.ArgumentParser(description="FitSci Evaluator CLI")
     parser.add_argument("id", help="PMC ID to evaluate (e.g. PMC12345)")
     args = parser.parse_args()
@@ -46,5 +45,8 @@ async def main():
     print(f"Breakdown: {evaluated_study.score_breakdown.model_dump()}")
     print("="*50 + "\n")
 
+def run():
+    asyncio.run(async_main())
+
 if __name__ == "__main__":
-    asyncio.run(main())
+    run()

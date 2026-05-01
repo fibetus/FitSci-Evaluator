@@ -11,11 +11,18 @@ dependencies = [
     "python-dotenv",
 ]
 
+[project.scripts]
+fitsci-evaluate = "src.cli.main:run"
+
 [tool.poetry]
 name = "fitsci-evaluator"
 version = "0.1.0"
 description = "Evidence-Based Fitness AI powered by Gemma 4"
 authors = ["Your Name <you@example.com>"]
+packages = [{ include = "src" }]
+
+[tool.poetry.scripts]
+fitsci-evaluate = "src.cli.main:run"
 
 [tool.poetry.dependencies]
 python = "^3.10"
