@@ -1,0 +1,9 @@
+pydantic>=2.0.0
+fastapi
+uvicorn
+sqlmodel
+httpx
+python-dotenv
+pymupdf
+pytest
+asyncio
