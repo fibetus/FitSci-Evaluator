@@ -37,7 +37,7 @@ async def main():
     # OUTPUT
     print("\n" + "="*50)
     print(f"VERDICT: {evaluated_study.quality_tier.upper()}")
-    print(f"SCORE: {evaluated_study.score}/20 ({evaluated_study.confidence}%)")
+    print(f"SCORE: {evaluated_study.score}/14 ({evaluated_study.confidence}%)")
     print("="*50)
     print(f"Title: {evaluated_study.title}")
     print(f"Journal: {evaluated_study.journal} (IF: {evaluated_study.impact_factor})")

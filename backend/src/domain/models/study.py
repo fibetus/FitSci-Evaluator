@@ -44,6 +44,7 @@ class ScoreBreakdown(BaseModel):
     recency_pts: int = 0
     impact_factor_pts: int = 0
     methodology_pts: int = 0
+    bias_pts: int = 0
 
 class Study(BaseModel):
     id: str = Field(..., description="PMC ID")
@@ -61,6 +62,7 @@ class Study(BaseModel):
     is_open_access: bool = False
     is_preprint: bool = False
     funding_source: Optional[str] = None
+    i_squared: Optional[float] = None
     
     type: StudyType
     topic: StudyTopic
