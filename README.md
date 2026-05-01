@@ -62,9 +62,17 @@ python -m pytest
 python -m src.cli.main PMC12345
 ```
 
-When installed as a package, the CLI adapter is exposed as:
+To use the `fitsci-evaluate` console script, install the package first (editable install recommended for development):
 
 ```bash
+pip install -e .
+fitsci-evaluate PMC12345
+```
+
+Or with Poetry:
+
+```bash
+poetry install
 fitsci-evaluate PMC12345
 ```
 
