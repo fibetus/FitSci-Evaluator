@@ -67,7 +67,7 @@ class Study(BaseModel):
     type: StudyType
     topic: StudyTopic
     subtopic: str
-    keywords: List[str] = []
+    keywords: List[str] = Field(default_factory=list)
     
     sample_size: Optional[int] = None
     duration_weeks: Optional[int] = None
@@ -90,9 +90,9 @@ class Study(BaseModel):
     
     summary_pl: Optional[str] = None
     summary_en: Optional[str] = None
-    key_findings: List[str] = []
+    key_findings: List[str] = Field(default_factory=list)
     practical_note: Optional[str] = None
-    caveats: List[str] = []
+    caveats: List[str] = Field(default_factory=list)
     
     status: LegalStatus = 'unclear'
     flags: dict = Field(default_factory=lambda: {

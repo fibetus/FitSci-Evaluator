@@ -1,59 +1,108 @@
 # FitSci Evaluator: Evidence-Based Fitness AI
 
-> **A bridge between complex science and gym practice.** > An intelligent system for analyzing and evaluating the credibility of scientific research related to training, nutrition, and hypertrophy.
+> **A bridge between complex science and gym practice.** An intelligent system for analyzing and evaluating the credibility of scientific research related to training, nutrition, and hypertrophy.
 
 ---
 
-## 1. The Problem (Context)
-The fitness industry suffers from a plague of misinformation. Sensational headlines appear every day: *"New study: this supplement increases muscle mass by 50%!"*. Unfortunately, most people training lack the competence to critically analyze scientific publications. 
+## 1. The Problem
+
+The fitness industry suffers from misinformation. Sensational headlines appear every day: *"New study: this supplement increases muscle mass by 50%!"* Unfortunately, most people training lack the competence or time to critically analyze scientific publications.
 
 **Key problems:**
-* **Interpretational errors:** Drawing conclusions based on studies conducted on beginners (*noob gains*), which do not translate to advanced trainees.
-* **Ignoring statistics:** Lack of understanding of statistical significance (*p-value*) and sample size (*N*).
-* **Information noise:** Changing training plans every week under the influence of single, low-quality reports (so-called *Bro-Science*).
+* **Interpretational errors:** Drawing conclusions from beginner-only studies that do not translate to trained athletes.
+* **Ignoring statistics:** Missing the practical meaning of sample size, effect size, heterogeneity, and statistical significance.
+* **Information noise:** Changing training plans every week because of isolated, low-quality reports.
 
 ## 2. The Solution
-**FitSci Evaluator** is an application utilizing advanced large language models (**Google Gemma 4**), acting as a personal scientific reviewer. The system automatically analyzes the content of medical and sports publications, evaluating their methodology and practical applicability.
 
-Instead of reading 20 pages of medical jargon, the user receives a **Credibility Verdict** and a specific training tip.
+**FitSci Evaluator** uses structured extraction and scoring to act as a personal scientific reviewer. The system analyzes medical and sports publications, evaluates their methodology, and translates the result into practical training or nutrition guidance.
 
-## 3. How it Works (Architecture)
+Instead of reading 20 pages of medical jargon, the user receives a **Credibility Verdict**, a bounded **Rigor Index**, and a practical note.
 
-### A. Data Extraction (NLP)
-The AI model analyzes the study text (PDF/Link) and extracts key parameters:
-* **Study type:** (e.g., Meta-analysis, RCT, observational study, animal study).
-* **Study group:** Sample size (*N*) and the training experience of the participants.
-* **Statistical significance:** *p*-values and standard deviations.
-* **Duration:** How long the intervention lasted.
+## 3. Hexagonal Architecture
 
-### B. Scoring Algorithm (Scoring Engine)
-The system assigns points based on objective *Evidence-Based Practice* criteria:
-* **Weight of Evidence:** Meta-analyses receive the highest priority, case studies the lowest.
-* **Beginner Filter:** A warning flag if the study involves untrained individuals.
-* **P-Value Analysis:** Rejecting results with low statistical significance.
+FitSci Evaluator follows hexagonal architecture so the scientific rules stay independent from scraping, storage, CLI, API, and UI choices.
 
-### C. Interpretation Layer
-The LLM translates raw data into actionable insights:
-* *"High-quality study – consider implementing this technique."*
-* *"Small sample size study – treat this as a curiosity, do not change your plan."*
+### Domain Core
 
-## 4. Target Audience
-* **Physique Sports Amateurs:** Those who want to train smarter, not harder.
-* **Personal Trainers:** Needing a tool for quick knowledge verification and client education.
-* **Content Creators:** Wanting to build authority based on reliable data (Evidence-Based).
+* `backend/src/domain/models`: Pydantic models for studies, populations, deltas, dosage, score breakdowns, and quality tiers.
+* `backend/src/domain/services`: pure domain services such as `ScoringService`. Domain services do not call external APIs, databases, or CLI code.
+* `backend/src/domain/ports`: protocols that describe what the domain needs from the outside world, including ingestion, evaluation, and persistence.
 
-## 5. Development Potential (Roadmap)
-- [ ] **PubMed API Integration:** Automatic retrieval of the latest studies.
-- [ ] **Study Comparator:** Juxtaposing two conflicting publications and indicating which is methodologically stronger.
-- [ ] **Supplement Database:** Automated supplement ranking based on aggregated scores from analyses.
+### Adapters
+
+* `backend/src/cli`: inbound CLI adapter that receives a study id, creates study data, and calls the domain scoring service.
+* Planned outbound adapters: PubMed/PMC ingestion, LLM-backed study extraction, and repository persistence.
+
+## 4. Scoring Contract
+
+The scoring engine assigns points based on objective evidence-quality criteria:
+
+* **Weight of evidence:** Meta-analyses receive the highest priority, then randomized trials, cohorts, narrative reviews, and case studies.
+* **Population relevance:** Human studies and trained populations score higher than animal, in-vitro, sedentary, or untrained populations.
+* **Sample size:** Larger samples increase confidence; very small samples receive penalties.
+* **Recency and journal quality:** Recent publications and higher-impact journals receive modest positive weight.
+* **Methodology and bias:** Placebo control, double blinding, preregistration, industry funding, and missing full text affect the breakdown.
+* **Bounded Rigor Index:** The published score is always `0-14`, even when internal penalties appear in the breakdown.
+* **Structured RCT handling:** Study type variants such as `rct_double_blind` count as methodology evidence even if duplicated boolean fields are missing.
+
+Quality tiers:
+
+* `high`: score `8-14`
+* `moderate`: score `5-7`
+* `rejected`: score `<5`
+
+## 5. Local Usage
+
+From the `backend` directory:
+
+```bash
+pip install -r requirements.txt
+python -m pytest
+python -m src.cli.main PMC12345
+```
+
+To use the `fitsci-evaluate` console script, install the package first (editable install recommended for development):
+
+```bash
+pip install -e .
+fitsci-evaluate PMC12345
+```
+
+Or with Poetry:
+
+```bash
+poetry install
+fitsci-evaluate PMC12345
+```
+
+## 6. Target Audience
+
+* **Physique sports amateurs:** People who want to train smarter, not harder.
+* **Personal trainers:** Coaches who need quick knowledge verification and client education.
+* **Content creators:** Authors who want to build authority based on reliable evidence.
+
+## 7. Implementation Plan
+
+- [x] Establish the domain model for studies, populations, outcomes, dosage, and scoring metadata.
+- [x] Define domain ports for ingestion, evaluation, and persistence.
+- [x] Implement the pure domain scoring service with a bounded `0-14` Rigor Index.
+- [x] Add a CLI adapter and package entry point for local evaluation.
+- [ ] Implement a PubMed/PMC outbound ingestion adapter behind `IngestorPort`.
+- [ ] Implement an LLM extraction adapter behind `EvaluatorPort`.
+- [ ] Implement a repository adapter behind `RepositoryPort`.
+- [ ] Add an application orchestration layer that coordinates ports without moving infrastructure concerns into the domain.
+- [ ] Add API or UI inbound adapters after the domain flow is stable.
 
 ---
 
 ### Technologies
-* **Language Model:** Google Gemma 4 (via Kaggle/Vertex AI)
-* **Framework:** Python, LangChain / LlamaIndex
-* **Interface:** Streamlit / Gradio
-* **Data Processing:** RAG (Retrieval-Augmented Generation)
+
+* **Language model:** Google Gemma family via Kaggle or Vertex AI
+* **Backend:** Python, Pydantic, FastAPI
+* **Architecture:** Hexagonal architecture with domain ports and adapters
+* **Data processing:** Retrieval-augmented extraction and structured scoring
 
 ---
-*Project created for the Kaggle hackathon: Gemma 4 Good.*
+
+*Project created for the Kaggle hackathon: Gemma for Good.*

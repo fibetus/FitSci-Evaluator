@@ -55,15 +55,13 @@ def test_rigor_index_animal_study_reject():
     
     scored_study = ScoringService.calculate_rigor_index(study)
     
-    # Expected Points:
-    # 0 (rct - but not double blind/placebo specified in points but study type starts with rct)
-    # wait, if type='rct' but is_double_blind=False and is_placebo_controlled=False, it gets 0 pts for study type in my implementation
-    # 0 (type) - 5 (animal) + 0 (N<50) + 1 (2023) - 1 (IF<2) = -5
-    assert scored_study.score == -5
+    # Raw breakdown is negative after penalties, but the published score stays
+    # on the documented 0-14 scale.
+    assert scored_study.score == 0
     assert scored_study.quality_tier == "rejected"
     assert scored_study.confidence == 0
 
-def test_rigor_index_rct_moderate():
+def test_rigor_index_rct_high_quality():
     study = Study(
         id="PMC999",
         pmc_url="https://example.com",
@@ -97,3 +95,51 @@ def test_rigor_index_rct_moderate():
     # So yes, they are additive in the matrix.
     assert scored_study.score == 10
     assert scored_study.quality_tier == "high" # 10 >= 8 is high
+
+def test_rigor_index_uses_rct_double_blind_type_without_duplicate_boolean():
+    study = Study(
+        id="PMC777",
+        pmc_url="https://example.com",
+        title="Double blind RCT from structured type",
+        authors=["Author D"],
+        journal="Applied Physiology",
+        year=2024,
+        impact_factor=6.0,
+        type="rct_double_blind",
+        topic="supplements",
+        subtopic="ergogenic",
+        sample_size=80,
+        population=Population(training_status="trained"),
+        primary_outcome="Power output"
+    )
+
+    scored_study = ScoringService.calculate_rigor_index(study)
+
+    assert scored_study.score_breakdown.study_type_pts == 3
+    assert scored_study.score_breakdown.methodology_pts == 1
+    assert scored_study.score == 10
+    assert scored_study.quality_tier == "high"
+
+def test_rigor_index_is_bounded_to_documented_scale():
+    study = Study(
+        id="PMC888",
+        pmc_url="https://example.com",
+        title="Maximal scoring RCT",
+        authors=["Author E"],
+        journal="Elite Journal",
+        year=2024,
+        impact_factor=20.0,
+        type="rct_double_blind",
+        is_placebo_controlled=True,
+        is_preregistered=True,
+        topic="protein",
+        subtopic="dose response",
+        sample_size=250,
+        population=Population(training_status="trained"),
+        primary_outcome="Lean mass"
+    )
+
+    scored_study = ScoringService.calculate_rigor_index(study)
+
+    assert scored_study.score == 14
+    assert scored_study.confidence <= 100
