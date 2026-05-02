@@ -11,6 +11,7 @@ class ScoringService:
 
         The breakdown may include penalties, but the published score is bounded
         to the documented 0-14 scale used by the CLI and downstream adapters.
+        Scoring basis reference: docs/scoring_basis.md.
         """
         breakdown = ScoreBreakdown()
         is_rct = study.type.startswith("rct")
