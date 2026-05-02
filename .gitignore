@@ -218,8 +218,18 @@ __marimo__/
 .streamlit/secrets.toml
 
 
-docs
-docs/*.md
+# Docs policy:
+# - Track top-level docs markdown files (including scoring_basis.md)
+# - Track internal audit markdown files
+# - Do not track private/internal reference materials (PDFs, CLAUDE.md, skills notes, etc.)
+docs/*
+!docs/*.md
+!docs/internal/
+docs/internal/*
+!docs/internal/audit/
+docs/internal/audit/*
+!docs/internal/audit/*.md
+docs/internal/private/
 docs/*.pdf
 
 # Local Codex planning notes
