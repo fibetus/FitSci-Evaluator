@@ -217,6 +217,9 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
+# Gemini / local IDE agent config (do not commit)
+.gemini/
+
 
 # Docs policy:
 # - Track top-level docs markdown files (including scoring_basis.md)
