@@ -6,7 +6,6 @@ Source of truth used to compile this file:
 - `backend/src/domain/services/scoring.py`
 - `backend/tests/test_scoring.py`
 
-> Note: `GEMINI.md` is referenced in code comments, but was not found in this repository snapshot.
 
 ## Rigor Index Components
 
