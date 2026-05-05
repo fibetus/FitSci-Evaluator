@@ -1,70 +1,81 @@
 # FitSci - Stack Analysis & Path Forward
 
-This document evaluates the technological path for **FitSci - Evaluator**, comparing the current MVP stack against a Python-centric alternative.
+> **Status (2026-05-06):** **Verdict locked — Hybrid stack chosen: Python (FastAPI) backend + React (Vite) frontend.** This document is preserved for the side-by-side comparison that produced the decision. The authoritative ADR is [`adr/0001-architecture-hexagonal.md`](./adr/0001-architecture-hexagonal.md). **Streamlit / Gradio / LangChain / LlamaIndex are explicitly out — do not reintroduce them.**
+
+This document evaluates the technological path for **FitSci - Evaluator**, comparing the prior MVP stack against the chosen Python-centric alternative.
 
 ---
 
 ## 1. Frontend Comparison: React vs. Streamlit
 
-| Feature | Current React Frontend (Vite) | Streamlit |
+| Feature | React Frontend (Vite) — **chosen** | Streamlit |
 | :--- | :--- | :--- |
-| **Visual Quality** | **Elite.** Custom "Bio-Signal" aesthetic, CRT effects, neon glows. | **Standard.** Functional "Data Science" look. Hard to achieve the "Bio-Signal" vibe. |
-| **Interactivity** | High. Smooth animations (Framer Motion), complex grids, radial gauges. | Moderate. Layout is mostly linear/column-based. Limited custom components. |
-| **Dev Speed** | Slow. Requires manual state management and UI styling. | **Fast.** Write UI in pure Python. No HTML/CSS knowledge needed. |
-| **Hackathon Impact** | **High.** Judges are impressed by polished, unique custom UIs. | **Moderate.** Clearly looks like a prototype. High focus on logic, less on "feel." |
+| **Visual quality** | **Elite.** Custom Bio-Signal aesthetic, CRT effects, neon glows. | Standard "data science" look; Bio-Signal vibe is impractical. |
+| **Interactivity** | High. Smooth animations (Framer Motion), complex grids, radial gauges. | Moderate. Mostly linear/column layouts; limited custom components. |
+| **Dev speed** | Slow (manual state + styling). | Fast (Python-only UI). |
+| **Hackathon impact** | **High.** Judges respond to polished, distinctive UIs. | Moderate. Reads as a prototype. |
 
-**Verdict:** Since you already have the React code and **love the aesthetic**, switching to Streamlit would be a "downgrade" in terms of hackathon presentation (Gemma 4 Good rewards impact and vision).
-
----
-
-## 2. Backend Analysis: Python (FastAPI)
-
-**Decision: Rewriting the Backend in Python makes 100% sense.**
-*   **AI Ecosystem:** Most Gemma 4 libraries (Kaggle Hub, Transformers, LangChain) are Python-native.
-*   **Integration:** Your existing scraper is already in Python. Unifying them into a single FastAPI app simplifies the architecture.
-*   **Speed:** FastAPI is nearly as fast as Node.js and much easier for AI workflows.
+**Verdict:** since the React Bio-Signal codebase already exists and is the project's strongest visual asset, switching to Streamlit would be a downgrade for *Gemma 4 Good* presentation. **React stays.**
 
 ---
 
-## 3. The Better Path: The Hybrid "Power" Stack
+## 2. Backend: Python (FastAPI) — chosen
 
-Instead of merging everything into one language, we should use a **Headless Architecture**.
-
-### Proposed Stack
-*   **Backend:** **Python (FastAPI)**. Handles Gemma 4 inference, scoring logic, and the scraping pipeline.
-*   **Frontend:** **Existing React (Vite)**. Kept as a separate application that communicates with the Python API via JSON.
-*   **Database:** **PostgreSQL** (already used in your MVP).
-
-### Why this path?
-1.  **Don't throw away the gold:** Your current UI is a major asset for a hackathon.
-2.  **Logic where it belongs:** Python is the industry standard for LLM orchestration.
-3.  **Scalability:** If you need to switch from local Gemma (Ollama) to cloud Gemma (Vertex AI), Python makes it a 5-line change.
+* **AI ecosystem:** the entire Gemma 4 toolchain (Kaggle Hub, Transformers, Ollama, Vertex AI Python SDK) is Python-native.
+* **Integration:** the ingestor is Python; unifying behind one FastAPI app keeps the stack coherent.
+* **Speed:** FastAPI is fast enough; AI workflows benefit far more from Python ergonomics than from Node throughput.
+* **OpenAPI for free:** FastAPI emits OpenAPI 3 out of the box, which we feed into `openapi-typescript` for the React frontend (kills hand-synced type drift — see [`audit-architecture.md §4.3`](./internal/audit/audit-architecture.md)).
 
 ---
 
-## 4. Proposed Development Roadmap: CLI-to-UI
+## 3. The Better Path: the Hybrid "Power" Stack — **chosen**
 
-To manage complexity, we will follow this "Inside-Out" strategy:
+A **headless architecture**:
 
-### Phase 1: The Core "Scientist" (CLI)
-*   Build the FastAPI backend first.
-*   Create a simple **CLI tool** in Python to test the scraper -> Gemma 4 -> Scoring Matrix flow.
-*   Output results to the terminal in clean JSON.
-*   *Goal: Ensure the "Credibility Verdict" logic is flawless.*
+* **Backend:** Python (FastAPI). Gemma 4 inference, scoring, scraping pipeline.
+* **Frontend:** React (Vite). Communicates with the Python API via JSON; types are codegen'd from `/openapi.json`.
+* **Database:** PostgreSQL with JSONB-first schema. See [`adr/0003-database-postgres-jsonb.md`](./adr/0003-database-postgres-jsonb.md).
 
-### Phase 2: The Bridge (API)
-*   Expose the Python logic through FastAPI endpoints (`/api/studies`, `/api/evaluate`).
-*   Ensure the JSON output matches the **Bio-Signal UI** requirements (the `Study` type).
+### Why this path
 
-### Phase 3: The "Bio-Signal" UI (Frontend)
-*   Reconnect the React frontend to the new Python API.
-*   Fix any data-type mismatches.
-*   Add final polish (animations, loading states).
+1. **Don't throw away the gold.** The Bio-Signal UI is a major hackathon asset.
+2. **Logic where it belongs.** Python is the industry standard for LLM orchestration.
+3. **The 5-line LLM swap is real.** Switching from local Gemma (Ollama) to cloud Gemma (Vertex AI) means swapping `GemmaOllamaAdapter` for `GemmaVertexAIAdapter` in the composition root — see [`audit-gemma4-selection.md §3`](./internal/audit/audit-gemma4-selection.md).
+
+---
+
+## 4. Roadmap recap (Inside-Out / CLI-to-UI)
+
+The phased plan below is summarized; the authoritative version (with measurable Definitions of Done, time-boxes, cross-cutting concerns, and a risk register) lives in [`FitSci - Development Plan.md`](./FitSci%20-%20Development%20Plan.md).
+
+### Phase 0 — Foundation (1 day)
+ADRs, doc reconciliation, application layer skeleton, `LoggerPort`/`ClockPort`, error taxonomy, CI bootstrap.
+
+### Phase 1 — Core Scientist (CLI MVP, 3 days)
+Real `PMCAdapter` + real `GemmaOllamaAdapter` + benchmark fixtures. **No mock data.** Output validates against `Study` Pydantic schema; M2 ≥80% field-level F1 on 5 fixtures; M3 ≥90% line coverage.
+
+### Phase 2 — Bridge (FastAPI + persistence, 2 days)
+`/api/v1/` versioned endpoints; `POST /evaluate` returns 202 + job ID; idempotency on duplicate PMCID; OpenAPI snapshot committed; rate-limit + correlation IDs.
+
+**Schema-freeze gate** between Phase 2 and Phase 3 — the `Study` schema becomes the immutable v1 contract.
+
+### Phase 3 — Bio-Signal Dashboard (React migration, 2 days)
+Codegen'd types from `/openapi.json`; mocks replaced with live calls; loading/empty/error states implemented; visual parity with the legacy app.
+
+### Phase 4 — Fine-tuning + Feature Extensions (post-hackathon, 2–4 weeks)
+Gemma 4 12B QLoRA on a 5–10k curated dataset, deployed behind a `RoutingEvaluatorAdapter` for canary rollout. Six Gemma feature extensions (lay translator, p-hacking sniffer, comparator, myth-buster, citation triage, co-pilot). Full design in [`audit-finetuning-pipeline.md`](./internal/audit/audit-finetuning-pipeline.md) and [`audit-gemma4-features.md`](./internal/audit/audit-gemma4-features.md).
 
 ---
 
 ## Conclusion
-**Do not use Streamlit.** It will kill the unique visual identity you've built. Instead, **rewrite the backend in FastAPI** and keep your **React frontend**. This gives you the best of both worlds: Scientific power and Visual impact.
+
+* **Streamlit is out.** It would kill the Bio-Signal identity.
+* **The backend is FastAPI + Pydantic.** Hexagonal architecture isolates Gemma, the database, and the UI.
+* **The frontend is the existing React (Vite) Bio-Signal app**, fed by a codegen'd typed client.
+* **No agent frameworks.** Plain prompt-chaining inside `adapters/ai/` until a workload demonstrably needs more.
+
+This gives us: scientific power + visual impact + maintainable seams.
 
 ---
-*Next Action: Update [[FitSci - Development Plan]] to reflect the FastAPI + React stack.*
+
+*Companion documents: [`FitSci - Development Plan.md`](./FitSci%20-%20Development%20Plan.md) · [`FitSci - Technical Architecture.md`](./FitSci%20-%20Technical%20Architecture.md) · [`adr/`](./adr/README.md).*
