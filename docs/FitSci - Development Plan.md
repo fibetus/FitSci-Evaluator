@@ -131,6 +131,11 @@ Wire Ingestor → Sifter → Judge → CLI end-to-end with **no mock data**. Eve
 5. **CLI rewrite.** `cli/main.py` constructs the `InMemoryStudyRepository` + `PMCAdapter` + `GemmaOllamaAdapter` + `EvaluateStudyUseCase` and calls `execute(pmc_id)`. **No more hardcoded `mock_study`.** A `--mock` flag preserves the legacy hardcoded behavior for offline demos.
 6. **Field-accuracy harness.** A `pytest` job that runs the live Sifter against each benchmark fixture and computes per-field F1 vs the gold JSON.
 
+**Implementation progress snapshot (current repository state)**
+- ✅ Task 1 complete: `PMCAdapter` exists at `backend/src/adapters/scrapers/pmc.py` implementing `IngestorPort` with `httpx.AsyncClient`, NCBI E-utilities (`efetch`/`esearch`), and local raw-byte caching (`~/.fitsci/cache/pmc/` by default).
+- ✅ Adapter tests added at `backend/tests/test_pmc_adapter.py` (cache behavior, response parsing, search normalization, and failure handling).
+- ⏳ Tasks 2–6 pending (Gemma adapter, fixture benchmark set, use-case wiring, CLI rewrite, extraction-accuracy harness).
+
 **Cross-cutting requirements** (see `Cross-Cutting Concerns.md`)
 - Structured JSON logging via `LoggerPort`; every adapter call gets a correlation ID.
 - LLM response cache keyed by `(model_digest, prompt_hash)` via a `CachePort`; in-memory adapter for now.
