@@ -42,8 +42,8 @@ The Judge is **deterministic**. Gemma extracts; it never scores.
 
 The codebase is organized into a pure **domain core**, a thin **application** orchestration layer, and **adapters** for every external system. Decision recorded in [ADR-0001](./docs/adr/0001-architecture-hexagonal.md); full layout in [docs/FitSci - Directory Structure.md](./docs/FitSci%20-%20Directory%20Structure.md).
 
-* `backend/src/domain/` — Pydantic models (`Study`, `Population`, `Delta`, `Dosage`, `ScoreBreakdown`), pure services (`ScoringService`), and `typing.Protocol` ports (`IngestorPort`, `EvaluatorPort`, `RepositoryPort`, plus Phase 0 additions: `LoggerPort`, `ClockPort`, `CachePort`, `MetricsPort`).
-* `backend/src/application/use_cases/` — orchestrators (Phase 0 onwards: `EvaluateStudyUseCase`, `GetStudyUseCase`, `ListStudiesUseCase`).
+* `backend/src/domain/` — Pydantic models (`Study`, `Population`, `Delta`, `Dosage`, `ScoreBreakdown`, `StudyFlags`), pure services (`ScoringService`), and `typing.Protocol` ports (`IngestorPort`, `EvaluatorPort`, `RepositoryPort`, `LoggerPort`, `ClockPort`).
+* `backend/src/application/use_cases/` — orchestrators (Phase 0: `EvaluateStudyUseCase` skeleton; Phase 1+ fills the workflow and adds read use cases).
 * `backend/src/adapters/` — the **only** modules permitted to import third-party SDKs: `ai/` (Gemma via Ollama / Vertex AI), `scrapers/` (PMC, PDF), `db/` (Postgres / in-memory), `api/` (FastAPI), `logging/`, `clock/`, `cache/`.
 * `backend/src/cli/` and `backend/src/main.py` — composition roots.
 
@@ -59,8 +59,8 @@ The full plan with measurable Definitions of Done, time-boxes, cross-cutting con
 
 | Phase | Goal | Status | Budget |
 |---|---|---|---|
-| **0 — Foundation** | ADRs, error taxonomy, `LoggerPort`/`ClockPort`, application layer skeleton, CI bootstrap | ⏳ next | 1 day |
-| **1 — Core Scientist (CLI)** | Real Ingestor + real Gemma + Judge end-to-end on 5 benchmark PMCIDs; **no mock data** | 🚧 partial | 3 days |
+| **0 — Foundation** | ADRs, error taxonomy, `LoggerPort`/`ClockPort`, application layer skeleton, CI bootstrap | ✅ done | 1 day |
+| **1 — Core Scientist (CLI)** | Real Ingestor + real Gemma + Judge end-to-end on 5 benchmark PMCIDs; **no mock data** | ⏳ next | 3 days |
 | **2 — Bridge (FastAPI)** | Versioned `/api/v1/`, idempotent `POST /evaluate` with job IDs, Postgres + Alembic, OpenAPI snapshot | ⏳ | 2 days |
 | **Schema-freeze gate** | `Study` model becomes immutable v1 contract | ⏳ | — |
 | **3 — Bio-Signal Dashboard** | React migration onto codegen'd typed client; visual parity with legacy app | ⏳ | 2 days |

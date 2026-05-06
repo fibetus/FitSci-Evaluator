@@ -1,11 +1,22 @@
-from ..models.study import ScoreBreakdown, Study
+from pydantic import BaseModel, ConfigDict
+
+from ..models.study import QualityTier, ScoreBreakdown, Study
 
 MAX_RIGOR_SCORE = 14
 
 
+class ScoringResult(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    score: int
+    confidence: int
+    quality_tier: QualityTier
+    score_breakdown: ScoreBreakdown
+
+
 class ScoringService:
     @staticmethod
-    def calculate_rigor_index(study: Study) -> Study:
+    def calculate_rigor_index(study: Study) -> ScoringResult:
         """
         Calculates the Rigor Index (0-14 pts) and Confidence.
 
@@ -74,9 +85,9 @@ class ScoringService:
         if study.is_preregistered:
             breakdown.methodology_pts += 1
 
-        if study.flags.get("is_industry_funded"):
+        if study.flags.is_industry_funded:
             breakdown.bias_pts -= 1
-        if not study.flags.get("has_full_text"):
+        if not study.flags.has_full_text:
             breakdown.bias_pts -= 1
 
         raw_pts = (
@@ -89,23 +100,22 @@ class ScoringService:
             + breakdown.bias_pts
         )
 
-        study.score = min(MAX_RIGOR_SCORE, max(0, raw_pts))
-        study.score_breakdown = breakdown
+        score = min(MAX_RIGOR_SCORE, max(0, raw_pts))
 
         # Thresholds: >=8 high | 5-7 moderate | <5 rejected
-        if study.score >= 8:
-            study.quality_tier = "high"
-        elif study.score >= 5:
-            study.quality_tier = "moderate"
+        if score >= 8:
+            quality_tier: QualityTier = "high"
+        elif score >= 5:
+            quality_tier = "moderate"
         else:
-            study.quality_tier = "rejected"
+            quality_tier = "rejected"
 
         # Confidence calculation:
         # base = (score / 14) * 100
         # multiplier: meta-analysis=1.0, double-blind placebo RCT=0.85,
         # RCT=0.75, other=0.5
         # bonus: I2<25% +10 | I2>75% -15 | citations>50 +8 | citations>10 +4
-        base_score = (study.score / MAX_RIGOR_SCORE) * 100
+        base_score = (score / MAX_RIGOR_SCORE) * 100
 
         multiplier = 0.5
         if study.type == "meta-analysis":
@@ -128,6 +138,11 @@ class ScoringService:
         elif citations > 10:
             bonuses += 4
 
-        study.confidence = int(min(100, max(0, base_score * multiplier + bonuses)))
+        confidence = int(min(100, max(0, base_score * multiplier + bonuses)))
 
-        return study
+        return ScoringResult(
+            score=score,
+            confidence=confidence,
+            quality_tier=quality_tier,
+            score_breakdown=breakdown,
+        )

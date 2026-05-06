@@ -1,7 +1,7 @@
 # FitSci - Cross-Cutting Concerns
 
 **Version:** v1.0 (post-audit, 2026-05-06)
-**Status:** Phase 0 input — every section is a hard requirement before the named phase ships.
+**Status:** Active baseline — Phase 0 guardrails are in place; later sections remain phase gates.
 **Source:** [`internal/audit/audit-development-plan.md §3`](./internal/audit/audit-development-plan.md), [`internal/audit/audit-architecture.md §4`](./internal/audit/audit-architecture.md), [`internal/audit/audit-gemma4-selection.md §6`](./internal/audit/audit-gemma4-selection.md)
 
 This document covers **everything that does not belong to a single module** but must be present for the system to be production-grade. The audit flagged the absence of these concerns as the project's biggest tactical gap; this file makes each one **measurable** and assigns it to a specific phase milestone.
@@ -221,7 +221,7 @@ class MetricsPort(Protocol):
 - `.env` is `.gitignore`d. Always.
 - `.env.example` is committed and lists every variable the application reads (with placeholder values).
 - No secret may be hardcoded in any `.py` file.
-- Pre-commit hook (Phase 0): scans staged diffs for likely secret patterns (basic regex on `AKIA*`, `gho_*`, `sk-*`, common JWT/OAuth patterns).
+- Pre-commit hook (`.githooks/pre-commit`): scans staged diffs for likely secret patterns (basic regex on `AKIA*`, `gho_*`, `sk-*`, common JWT/OAuth patterns).
 
 ### Variables (initial)
 ```
@@ -246,7 +246,7 @@ RATE_LIMIT_PER_MINUTE=30
 ```
 
 ### Acceptance (Phase 0)
-- `.env.example` exists; `.env` is in `.gitignore`; pre-commit hook installed and tested with a synthetic AWS key.
+- `.env.example` exists; `.env` is in `.gitignore`; `.githooks/pre-commit` is committed and configured locally with `core.hooksPath`.
 
 ---
 
@@ -346,7 +346,7 @@ GDPR is **not in scope for v1** — no PII is collected. If user accounts ship i
 - `docs/INDEX.md` is updated whenever a doc is added, removed, or substantially restructured.
 
 ### Acceptance
-- A pre-commit hook warns if `scoring.py` is staged without `scoring_basis.md`.
+- `.githooks/pre-commit` blocks commits if `scoring.py` is staged without `scoring_basis.md`.
 - A CI step asserts `docs/INDEX.md` lists every `docs/*.md` file (excluding `internal/`).
 
 ---

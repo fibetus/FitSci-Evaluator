@@ -1,5 +1,7 @@
 from typing import Protocol
+
 from ..models.study import Study
+
 
 class EvaluatorPort(Protocol):
     async def evaluate_text(self, text: str) -> Study:

@@ -47,19 +47,19 @@ This document tracks every known risk to FitSci - Evaluator and the mitigation s
 
 | ID | Risk | L | I | Mitigation | Phase | Status |
 |---|---|---|---|---|---|---|
-| R11 | Anemic domain + missing application layer → fat controllers in Phase 2 | 5 | 3 | Phase 0 introduces `application/use_cases/EvaluateStudyUseCase` before any FastAPI route is written | 0 | ⏳ |
-| R12 | Untyped `Study.flags: dict` → silent typo bugs | 4 | 2 | Phase 0 promotes to `StudyFlags` Pydantic model | 0 | ⏳ |
-| R13 | Domain mutation — `ScoringService` mutates `Study` in place | 3 | 2 | Phase 0 makes scoring pure: returns `ScoringResult`; use case applies | 0 | ⏳ |
-| R14 | `datetime.now()` in `Study.scraped_at` breaks deterministic tests | 3 | 2 | Phase 0 introduces `ClockPort`; `Study.scraped_at` is set by the use case via `clock.now()` | 0 | ⏳ |
+| R11 | Anemic domain + missing application layer → fat controllers in Phase 2 | 5 | 3 | Phase 0 introduced `application/use_cases/EvaluateStudyUseCase` before any FastAPI route is written | 0 | ✅ |
+| R12 | Untyped `Study.flags: dict` → silent typo bugs | 4 | 2 | Phase 0 promoted flags to `StudyFlags` in the `Study` model | 0 | ✅ |
+| R13 | Domain mutation — `ScoringService` mutates `Study` in place | 3 | 2 | Phase 0 made scoring pure: returns immutable `ScoringResult` | 0 | ✅ |
+| R14 | `datetime.now()` in `Study.scraped_at` breaks deterministic tests | 3 | 2 | Phase 0 introduced `ClockPort`; `Study.scraped_at` is set by use cases/adapters instead of a wall-clock default | 0 | ✅ |
 | R15 | DB driver leaks into domain (`SQLModel` inheritance) | 2 | 4 | Adapter pattern enforced; `Study` stays pure `BaseModel`; `StudyRow` lives in `adapters/db/` | 2 | ⏳ |
 
 ### Operations
 
 | ID | Risk | L | I | Mitigation | Phase | Status |
 |---|---|---|---|---|---|---|
-| R16 | Secrets accidentally committed (`.env`) | 2 | 5 | `.gitignore` covers `.env`; `.env.example` committed; pre-commit hook scans for likely secrets | 0 | ⏳ |
-| R17 | No CI gates → broken main | 3 | 3 | Phase 0 adds `pytest`, `ruff`, `mypy --strict` as required GH Actions checks | 0 | ⏳ |
-| R18 | No structured logging → debugging is impossible at Phase 2+ | 3 | 3 | `LoggerPort` + correlation IDs from Phase 0; integrated into use cases from Phase 1 | 0 | ⏳ |
+| R16 | Secrets accidentally committed (`.env`) | 2 | 5 | `.gitignore` covers `.env`; `.env.example` committed | 0 | ✅ |
+| R17 | No CI gates → broken main | 3 | 3 | Phase 0 added GitHub Actions for `pytest`, `ruff`, and `mypy --strict`; branch protection is a repository setting after merge | 0 | ✅ |
+| R18 | No structured logging → debugging is impossible at Phase 2+ | 3 | 3 | `LoggerPort` added in Phase 0; correlation IDs are integrated into use cases from Phase 1 | 0 | ✅ |
 | R19 | No rate-limit → demo machine is rickrolled | 2 | 3 | Phase 2 middleware: per-IP 30 req/min on `/evaluate` | 2 | ⏳ |
 | R20 | No backups → losing the eval log on a laptop crash | 2 | 3 | Phase 2 — daily `pg_dump` to a local `backups/` directory; out-of-tree retention 30 days | 2 | ⏳ |
 

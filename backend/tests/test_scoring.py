@@ -1,6 +1,6 @@
-import pytest
-from src.domain.models.study import Study, Population
+from src.domain.models.study import Population, Study, StudyFlags
 from src.domain.services.scoring import ScoringService
+
 
 def test_rigor_index_meta_analysis_high_quality():
     study = Study(
@@ -61,6 +61,80 @@ def test_rigor_index_animal_study_reject():
     assert scored_study.quality_tier == "rejected"
     assert scored_study.confidence == 0
 
+
+def test_rigor_index_cohort_with_old_small_low_confidence_signals():
+    study = Study(
+        id="PMC222",
+        pmc_url="https://example.com",
+        title="Tiny older cohort",
+        authors=["Author B"],
+        journal="Low IF Journal",
+        year=2018,
+        impact_factor=1.5,
+        type="cohort_prospective",
+        topic="recovery",
+        subtopic="sleep",
+        sample_size=8,
+        population=Population(training_status="mixed"),
+        primary_outcome="Recovery score",
+        citation_count=20,
+        i_squared=80
+    )
+
+    scored_study = ScoringService.calculate_rigor_index(study)
+
+    assert scored_study.score == 0
+    assert scored_study.quality_tier == "rejected"
+    assert scored_study.confidence == 0
+    assert scored_study.score_breakdown.sample_size_pts == -3
+    assert scored_study.score_breakdown.recency_pts == -1
+
+
+def test_rigor_index_narrative_review_can_be_moderate():
+    study = Study(
+        id="PMC333",
+        pmc_url="https://example.com",
+        title="Narrative review",
+        authors=["Author G"],
+        journal="Review Journal",
+        year=2022,
+        impact_factor=5.0,
+        type="review_narrative",
+        topic="periodization",
+        subtopic="block training",
+        sample_size=55,
+        population=Population(training_status="trained"),
+        primary_outcome="Strength"
+    )
+
+    scored_study = ScoringService.calculate_rigor_index(study)
+
+    assert scored_study.score == 6
+    assert scored_study.quality_tier == "moderate"
+    assert scored_study.score_breakdown.study_type_pts == 1
+
+
+def test_rigor_index_large_cohort_gets_study_type_points():
+    study = Study(
+        id="PMC444",
+        pmc_url="https://example.com",
+        title="Large prospective cohort",
+        authors=["Author H"],
+        journal="Cohort Journal",
+        year=2023,
+        impact_factor=3.0,
+        type="cohort_prospective",
+        topic="injury",
+        subtopic="load management",
+        sample_size=150,
+        primary_outcome="Injury rate"
+    )
+
+    scored_study = ScoringService.calculate_rigor_index(study)
+
+    assert scored_study.score_breakdown.study_type_pts == 2
+
+
 def test_rigor_index_rct_high_quality():
     study = Study(
         id="PMC999",
@@ -83,8 +157,9 @@ def test_rigor_index_rct_high_quality():
     scored_study = ScoringService.calculate_rigor_index(study)
     
     # Expected Points:
-    # 4 (RCT DB+Placebo) + 1 (Untrained) + 1 (N 50-200) + 1 (2022) + 1 (IF 5-10) + 2 (Methodology: DB+Placebo) = 10 raw
-    # Wait, my implementation for RCT DB+Placebo adds 4 to study_type_pts AND then methodology adds +1 for DB and +1 for Placebo?
+    # 4 (RCT DB+Placebo) + 1 (Untrained) + 1 (N 50-200) + 1 (2022)
+    # + 1 (IF 5-10) + 2 (Methodology: DB+Placebo) = 10 raw.
+    # The type tier and methodology controls are additive in the matrix.
     # GEMINI.md says: 
     # Meta-analiza / Systematic Review +5
     # RCT double-blind placebo +4
@@ -143,3 +218,27 @@ def test_rigor_index_is_bounded_to_documented_scale():
 
     assert scored_study.score == 14
     assert scored_study.confidence <= 100
+
+def test_calculate_rigor_index_does_not_mutate_study():
+    study = Study(
+        id="PMC555",
+        pmc_url="https://example.com",
+        title="Industry funded trial",
+        authors=["Author F"],
+        journal="Small Journal",
+        year=2020,
+        impact_factor=1.0,
+        type="rct",
+        topic="creatine",
+        subtopic="loading",
+        sample_size=45,
+        flags=StudyFlags(is_industry_funded=True, has_full_text=False),
+        primary_outcome="Strength"
+    )
+    before = study.model_dump()
+
+    scored_study = ScoringService.calculate_rigor_index(study)
+
+    assert study.model_dump() == before
+    assert study.score == 0
+    assert scored_study.score_breakdown.bias_pts == -2

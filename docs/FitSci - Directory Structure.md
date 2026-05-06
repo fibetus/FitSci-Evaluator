@@ -1,6 +1,6 @@
 # FitSci - Hexagonal Project Structure
 
-> **Status (2026-05-06):** target structure for the post-Phase-0 codebase. Items already implemented in `backend/src/` are marked ✅; items added during Phases 0–3 are marked 🚧 / ⏳. The CLI currently uses mock data; Phase 1 wires the real adapters.
+> **Status (2026-05-06):** Phase 0 foundation is implemented. Items already implemented in `backend/src/` are marked ✅; future Phase 1–3 items are marked 🚧 / ⏳. The CLI currently uses mock data; Phase 1 wires the real adapters.
 
 The directory follows **Hexagonal Architecture** ([ADR-0001](./adr/0001-architecture-hexagonal.md)): pure domain core, ports as `typing.Protocol` interfaces, adapters as the **only** modules permitted to import infrastructure libraries (`httpx`, `asyncpg`, `sqlalchemy`, `ollama`, `google.cloud.aiplatform`, ...).
 
@@ -10,19 +10,18 @@ fitsci-evaluator/
 │   ├── src/
 │   │   ├── domain/                 # CORE — pure Python (Pydantic-only third-party dep)
 │   │   │   ├── models/             # ✅ Pydantic schemas (Study, Population, Delta, Dosage, ScoreBreakdown)
-│   │   │   │   ├── study.py        # ✅
-│   │   │   │   └── flags.py        # ⏳ StudyFlags Pydantic model (replaces Study.flags: dict)
+│   │   │   │   └── study.py        # ✅ Study + StudyFlags
 │   │   │   ├── services/           # ✅ Pure domain services
-│   │   │   │   └── scoring.py      # ✅ ScoringService (will become pure / non-mutating in Phase 0)
+│   │   │   │   └── scoring.py      # ✅ pure ScoringService returning ScoringResult
 │   │   │   ├── ports/              # ✅ Protocols (no implementation)
 │   │   │   │   ├── ingestor.py     # ✅
 │   │   │   │   ├── evaluator.py    # ✅
-│   │   │   │   ├── repository.py   # ✅ — extended with list_by(), exists(), delete() in Phase 0
-│   │   │   │   ├── logger.py       # ⏳ LoggerPort (Phase 0)
-│   │   │   │   ├── clock.py        # ⏳ ClockPort (Phase 0)
+│   │   │   │   ├── repository.py   # ✅ save/get_by_id/list_by/exists/delete
+│   │   │   │   ├── logger.py       # ✅ LoggerPort
+│   │   │   │   ├── clock.py        # ✅ ClockPort
 │   │   │   │   ├── cache.py        # ⏳ CachePort for LLM responses (Phase 1)
 │   │   │   │   └── metrics.py      # ⏳ MetricsPort (Phase 1)
-│   │   │   └── errors.py           # ⏳ Domain error taxonomy (Phase 0)
+│   │   │   └── errors.py           # ✅ Domain error taxonomy
 │   │   │
 │   │   ├── application/            # ⏳ USE-CASES — orchestrate ports for one user-facing operation
 │   │   │   └── use_cases/
@@ -43,11 +42,11 @@ fitsci-evaluator/
 │   │   │   │   └── pdf.py                 # ⏳ Local PDF via PyMuPDF
 │   │   │   ├── db/
 │   │   │   │   ├── postgres_study_repository.py  # ⏳ Phase 2
-│   │   │   │   └── in_memory_repository.py       # ⏳ Phase 0/1 — used by tests + CLI dev
+│   │   │   │   └── in_memory_repository.py       # ⏳ Phase 1 — used by tests + CLI dev
 │   │   │   ├── logging/
-│   │   │   │   └── stdlib_logger.py       # ⏳ Phase 0 — adapts stdlib logging to LoggerPort
+│   │   │   │   └── stdlib_logger.py       # ⏳ Phase 1 — adapts stdlib logging to LoggerPort
 │   │   │   ├── clock/
-│   │   │   │   └── system_clock.py        # ⏳ Phase 0
+│   │   │   │   └── system_clock.py        # ⏳ Phase 1
 │   │   │   ├── cache/
 │   │   │   │   └── in_memory_cache.py     # ⏳ Phase 1
 │   │   │   ├── api/                       # ⏳ Phase 2 — FastAPI routers + DI
@@ -81,7 +80,6 @@ fitsci-evaluator/
 │   │       └── 0001_initial.py
 │   ├── openapi/                    # ⏳ Phase 2 — committed snapshot of /openapi.json
 │   │   └── v1.json
-│   ├── .env.example                # ⏳ Phase 0
 │   ├── pyproject.toml              # ✅
 │   └── requirements.txt            # ✅
 │
@@ -103,10 +101,10 @@ fitsci-evaluator/
 │   ├── FitSci - Stack Analysis.md
 │   ├── FitSci - Research Evaluation Model.md
 │   ├── FitSci - Design.md
-│   ├── FitSci - Cross-Cutting Concerns.md       # ⏳ Phase 0
-│   ├── FitSci - Risk Register.md                # ⏳ Phase 0
+│   ├── FitSci - Cross-Cutting Concerns.md       # ✅ Phase 0 baseline
+│   ├── FitSci - Risk Register.md                # ✅ Phase 0 reviewed
 │   ├── scoring_basis.md                         # ✅ canonical v1 scoring spec
-│   ├── adr/                                     # ⏳ Phase 0 — Architecture Decision Records
+│   ├── adr/                                     # ✅ Architecture Decision Records
 │   │   ├── README.md
 │   │   ├── 0001-architecture-hexagonal.md
 │   │   ├── 0002-scoring-canonical-spec.md
@@ -118,8 +116,11 @@ fitsci-evaluator/
 │
 ├── .github/
 │   └── workflows/
-│       └── ci.yml                  # ⏳ Phase 0 — pytest + ruff + mypy --strict
+│       └── ci.yml                  # ✅ pytest + ruff + mypy --strict
 │
+├── .env.example                    # ✅
+├── .githooks/
+│   └── pre-commit                  # ✅ secret scan + scoring spec guard
 ├── .gitignore
 ├── LICENSE
 └── README.md                       # entry point — points to docs/INDEX.md

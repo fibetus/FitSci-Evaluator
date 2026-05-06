@@ -1,4 +1,5 @@
-from typing import Protocol, List
+from typing import List, Protocol
+
 
 class IngestorPort(Protocol):
     async def fetch_by_id(self, study_id: str) -> str:

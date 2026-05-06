@@ -1,0 +1,26 @@
+#!/usr/bin/env sh
+set -eu
+
+repo_root="$(pwd -P)"
+
+git_safe() {
+  git -c "safe.directory=$repo_root" "$@"
+}
+
+staged_files="$(git_safe diff --cached --name-only)"
+
+if printf '%s\n' "$staged_files" | grep -qx 'backend/src/domain/services/scoring.py'; then
+  if ! printf '%s\n' "$staged_files" | grep -qx 'docs/scoring_basis.md'; then
+    echo "scoring.py changed without docs/scoring_basis.md." >&2
+    echo "Update the canonical scoring spec in the same commit." >&2
+    exit 1
+  fi
+fi
+
+if git_safe diff --cached --unified=0 |
+  grep -E '^\+' |
+  grep -E '(AKIA[0-9A-Z]{16}|gho_[A-Za-z0-9_]{20,}|sk-[A-Za-z0-9]{20,}|eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)' >/dev/null
+then
+  echo "Potential secret detected in staged diff; remove it before committing." >&2
+  exit 1
+fi

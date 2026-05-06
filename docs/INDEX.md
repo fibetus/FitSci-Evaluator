@@ -7,7 +7,7 @@
 
 ## 1. Reading Order (recommended onboarding path)
 
-For a new contributor or judge to get from "what is this?" to "ready to ship Phase 0":
+For a new contributor or judge to get from "what is this?" to "ready for Phase 1":
 
 | # | Document | Reading time | Why now |
 |---|---|---|---|

@@ -1,5 +1,6 @@
 from datetime import datetime
-from typing import List, Optional, Literal
+from typing import List, Literal, Optional
+
 from pydantic import BaseModel, Field
 
 # Topic and Type definitions matching the Scientist Scraper spec
@@ -45,6 +46,13 @@ class ScoreBreakdown(BaseModel):
     impact_factor_pts: int = 0
     methodology_pts: int = 0
     bias_pts: int = 0
+
+
+class StudyFlags(BaseModel):
+    is_industry_funded: bool = False
+    is_preprint: bool = False
+    has_full_text: bool = True
+    needs_manual_review: bool = False
 
 class Study(BaseModel):
     id: str = Field(..., description="PMC ID")
@@ -95,11 +103,6 @@ class Study(BaseModel):
     caveats: List[str] = Field(default_factory=list)
     
     status: LegalStatus = 'unclear'
-    flags: dict = Field(default_factory=lambda: {
-        "is_industry_funded": False,
-        "is_preprint": False,
-        "has_full_text": True,
-        "needs_manual_review": False
-    })
+    flags: StudyFlags = Field(default_factory=StudyFlags)
     
-    scraped_at: datetime = Field(default_factory=datetime.now)
+    scraped_at: Optional[datetime] = None

@@ -1,7 +1,7 @@
 # FitSci - Evaluator: Master Development Plan
 
 **Version:** v2.0 (post-audit, 2026-05-06)
-**Status:** READY FOR PHASE 0 — Foundation
+**Status:** PHASE 0 COMPLETE — Ready for Phase 1
 **Companion docs:** `FitSci - Research Evaluation Model.md` · `FitSci - Technical Architecture.md` · `FitSci - Directory Structure.md` · `FitSci - Stack Analysis.md` · `FitSci - Design.md` · `FitSci - Cross-Cutting Concerns.md` · `FitSci - Risk Register.md` · `scoring_basis.md` · `adr/`
 
 This is the definitive implementation roadmap for **FitSci - Evaluator** (Gemma 4 Good Hackathon). It folds the findings of `docs/internal/audit/*` into one executable plan: **Hexagonal Architecture** + **FastAPI / React hybrid stack** + **Bio-Signal design system**, sequenced inside-out (CLI → API → UI), with measurable Definitions of Done, time-boxes, cross-cutting requirements, and a risk register.
@@ -87,7 +87,7 @@ Time-boxes are **target budgets**, not commitments. They force prioritization. I
 
 > **Status legend:** ✅ done · 🚧 in progress · ⏳ next · 📦 deferred
 
-### Phase 0 — Foundation (1 day)  ⏳
+### Phase 0 — Foundation (1 day)  ✅
 
 Resolve doc/code drift and create the scaffolding the next three phases all assume. No new business features.
 
@@ -104,14 +104,18 @@ Resolve doc/code drift and create the scaffolding the next three phases all assu
 6. **Repo hygiene.** Commit `.env.example`, ensure `.env` is `.gitignore`d.
 
 **Definition of Done — Phase 0**
-- [ ] All four ADRs committed at `docs/adr/`.
-- [ ] `Research Evaluation Model.md` and `scoring_basis.md` reconcile (no contradicting numbers).
-- [ ] `Study.flags` is `StudyFlags`, not `dict`.
-- [ ] `ScoringService` is pure (no mutation); existing tests pass against the new return type.
-- [ ] `domain/ports/logger.py` and `domain/ports/clock.py` exist with `Protocol` definitions.
-- [ ] `domain/errors.py` exists; raised errors are catalogued (see `Cross-Cutting Concerns §3`).
-- [ ] CI green on `main` after a no-op PR.
-- [ ] `.env.example` committed.
+- [x] All four ADRs committed at `docs/adr/`.
+- [x] `Research Evaluation Model.md` and `scoring_basis.md` reconcile (no contradicting numbers).
+- [x] `Study.flags` is `StudyFlags`, not `dict`.
+- [x] `ScoringService` is pure (no mutation); existing tests pass against the new return type.
+- [x] `domain/ports/logger.py` and `domain/ports/clock.py` exist with `Protocol` definitions.
+- [x] `domain/errors.py` exists; raised errors are catalogued (see `Cross-Cutting Concerns §3`).
+- [x] CI workflow exists and local CI-equivalent checks pass (`pytest`, `ruff`, `mypy --strict`).
+- [x] `.env.example` committed.
+
+**Phase 0 operational note:** GitHub required-status protection for `main` must be enabled
+in repository settings after `.github/workflows/ci.yml` is merged; branch protection cannot
+be committed from the codebase itself.
 
 ---
 
@@ -315,4 +319,4 @@ Every section above can be traced to its audit source for accountability:
 
 ---
 
-*Status: PHASE 0 READY · Next step: execute Phase 0 tasks 1–6.*
+*Status: PHASE 0 COMPLETE · Next step: execute Phase 1 Core Scientist tasks.*

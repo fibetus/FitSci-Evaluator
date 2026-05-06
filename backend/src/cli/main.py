@@ -1,9 +1,11 @@
-import asyncio
 import argparse
-from ..domain.models.study import Study, Population
+import asyncio
+
+from ..domain.models.study import Population, Study
 from ..domain.services.scoring import ScoringService
 
-async def async_main():
+
+async def async_main() -> None:
     parser = argparse.ArgumentParser(description="FitSci Evaluator CLI")
     parser.add_argument("id", help="PMC ID to evaluate (e.g. PMC12345)")
     args = parser.parse_args()
@@ -27,25 +29,28 @@ async def async_main():
         sample_size=450,
         population=Population(training_status="trained", sex="male"),
         primary_outcome="Muscle Thickness",
-        summary_en="High volume training leads to superior hypertrophy outcomes in trained individuals."
+        summary_en=(
+            "High volume training leads to superior hypertrophy outcomes in trained individuals."
+        )
     )
 
     # THE JUDGE (Pure logic)
-    evaluated_study = ScoringService.calculate_rigor_index(mock_study)
+    scoring_result = ScoringService.calculate_rigor_index(mock_study)
 
     # OUTPUT
     print("\n" + "="*50)
-    print(f"VERDICT: {evaluated_study.quality_tier.upper()}")
-    print(f"SCORE: {evaluated_study.score}/14 ({evaluated_study.confidence}%)")
+    print(f"VERDICT: {scoring_result.quality_tier.upper()}")
+    print(f"SCORE: {scoring_result.score}/14 ({scoring_result.confidence}%)")
     print("="*50)
-    print(f"Title: {evaluated_study.title}")
-    print(f"Journal: {evaluated_study.journal} (IF: {evaluated_study.impact_factor})")
-    print(f"Type: {evaluated_study.type.upper()}")
+    print(f"Title: {mock_study.title}")
+    print(f"Journal: {mock_study.journal} (IF: {mock_study.impact_factor})")
+    print(f"Type: {mock_study.type.upper()}")
     print("-"*50)
-    print(f"Breakdown: {evaluated_study.score_breakdown.model_dump()}")
+    print(f"Breakdown: {scoring_result.score_breakdown.model_dump()}")
     print("="*50 + "\n")
 
-def run():
+
+def run() -> None:
     asyncio.run(async_main())
 
 if __name__ == "__main__":

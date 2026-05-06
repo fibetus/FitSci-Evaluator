@@ -47,7 +47,10 @@ Source of truth used to compile this file:
 
 ## Aggregate Score and Tier
 
-`score` is the sum of all points from sections above.
+`raw_pts` is the sum of all points from sections above. The published `score`
+is clamped to the implemented 0-14 range:
+
+`score = min(14, max(0, raw_pts))`
 
 Quality tier thresholds:
 - `score >= 8` -> `high`
@@ -56,7 +59,7 @@ Quality tier thresholds:
 
 ## Confidence Calculation
 
-1. `base_score = (max(0, raw_pts) / 14) * 100`
+1. `base_score = (score / 14) * 100`
 2. multiplier:
    - `meta-analysis`: `1.0`
    - double-blind + placebo: `0.85`
@@ -68,3 +71,9 @@ Quality tier thresholds:
    - `citation_count > 50`: `+8`
    - `citation_count > 10`: `+4`
 4. `confidence = int(clamp(base_score * multiplier + bonuses, 0, 100))`
+
+## Purity Contract
+
+`ScoringService.calculate_rigor_index(study)` returns an immutable
+`ScoringResult` containing `score`, `confidence`, `quality_tier`, and
+`score_breakdown`. It does not mutate the input `Study`.
