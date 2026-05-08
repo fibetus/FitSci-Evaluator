@@ -1,0 +1,67 @@
+{
+  "id": "PMC4558471",
+  "pmid": "26330900",
+  "doi": "10.3390/nu7095333",
+  "pmc_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4558471/",
+  "title": "Nutritional interventions to augment resistance training-induced skeletal muscle hypertrophy",
+  "authors": ["Morton RW", "McGlory C", "Phillips SM"],
+  "journal": "Nutrients",
+  "year": 2015,
+  "impact_factor": 5.9,
+  "if_source": "lookup",
+  "citation_count": 285,
+  "is_open_access": true,
+  "is_preprint": false,
+  "funding_source": null,
+  "i_squared": null,
+  "type": "review_narrative",
+  "topic": "supplements",
+  "subtopic": "nutrition guidelines",
+  "keywords": ["hypertrophy", "protein", "supplements", "resistance training"],
+  "sample_size": null,
+  "duration_weeks": null,
+  "population": {
+    "age_range": null,
+    "sex": "mixed",
+    "training_status": "mixed",
+    "health_status": "healthy"
+  },
+  "is_human_study": true,
+  "is_double_blind": false,
+  "is_placebo_controlled": false,
+  "is_preregistered": false,
+  "has_conflict_of_interest": false,
+  "primary_outcome": "Review of nutritional strategies for hypertrophy",
+  "delta": null,
+  "dosage": null,
+  "score": 3,
+  "confidence": 30,
+  "quality_tier": "rejected",
+  "score_breakdown": {
+    "study_type_pts": 1,
+    "population_pts": 1,
+    "sample_size_pts": 0,
+    "recency_pts": -1,
+    "impact_factor_pts": 1,
+    "methodology_pts": 1,
+    "bias_pts": 0
+  },
+  "summary_pl": "Przegląd narracyjny omawiający kluczowe strategie żywieniowe wspierające hipertrofię, ze szczególnym naciskiem na podaż białka i leucyny.",
+  "summary_en": "A narrative review detailing key nutritional interventions, particularly protein dose and timing, to optimize skeletal muscle hypertrophy.",
+  "key_findings": [
+    "Optymalna dawka białka to 1.6 - 2.2 g/kg masy ciała.",
+    "Białko bogate w leucynę (np. serwatkowe) skuteczniej promuje syntezę białek mięśniowych."
+  ],
+  "practical_note": "Spożywaj regularne dawki pełnowartościowego białka co 3-4 godziny.",
+  "caveats": [
+    "Przegląd narracyjny - mniejsza waga dowodowa niż w przypadku meta-analiz."
+  ],
+  "status": "legal",
+  "flags": {
+    "is_industry_funded": false,
+    "is_preprint": false,
+    "has_full_text": true,
+    "needs_manual_review": true
+  },
+  "scraped_at": "2026-05-08T20:00:00Z"
+}

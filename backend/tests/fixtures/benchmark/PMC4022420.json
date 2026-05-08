@@ -1,0 +1,81 @@
+{
+  "id": "PMC4022420",
+  "pmid": "24834017",
+  "doi": "10.1186/1550-2783-11-20",
+  "pmc_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4022420/",
+  "title": "The effects of consuming a high protein diet (4.4 g/kg/d) on body composition in resistance-trained individuals",
+  "authors": ["Antonio J", "Peacock CA", "Salah A", "Sanders MS", "Silver T"],
+  "journal": "Journal of the International Society of Sports Nutrition",
+  "year": 2014,
+  "impact_factor": 6.1,
+  "if_source": "lookup",
+  "citation_count": 150,
+  "is_open_access": true,
+  "is_preprint": false,
+  "funding_source": null,
+  "i_squared": null,
+  "type": "rct_double_blind",
+  "topic": "protein",
+  "subtopic": "high protein diet",
+  "keywords": ["body composition", "fat free mass", "fat mass", "protein"],
+  "sample_size": 30,
+  "duration_weeks": 8,
+  "population": {
+    "age_range": "20-30",
+    "sex": "mixed",
+    "training_status": "trained",
+    "health_status": "healthy"
+  },
+  "is_human_study": true,
+  "is_double_blind": true,
+  "is_placebo_controlled": true,
+  "is_preregistered": false,
+  "has_conflict_of_interest": false,
+  "primary_outcome": "Body composition (Fat Mass, Fat Free Mass, % Body Fat)",
+  "delta": {
+    "test_group_change_pct": 1.9,
+    "placebo_change_pct": 1.3,
+    "net_effect_pct": 0.6,
+    "effect_size": null,
+    "effect_size_type": null,
+    "p_value": 0.5,
+    "is_significant": false
+  },
+  "dosage": {
+    "amount": "4.4",
+    "unit": "g/kg/d",
+    "protocol": "Daily high protein intake",
+    "timing": null
+  },
+  "score": 10,
+  "confidence": 80,
+  "quality_tier": "high",
+  "score_breakdown": {
+    "study_type_pts": 4,
+    "population_pts": 2,
+    "sample_size_pts": 0,
+    "recency_pts": -1,
+    "impact_factor_pts": 1,
+    "methodology_pts": 4,
+    "bias_pts": 0
+  },
+  "summary_pl": "Spożycie ekstremalnie wysokich dawek białka (4.4 g/kg masy ciała) nie wpłynęło negatywnie na kompozycję ciała ani nie spowodowało przyrostu tkanki tłuszczowej pomimo nadwyżki kalorycznej.",
+  "summary_en": "Consuming a hyper-caloric, high-protein diet (4.4 g/kg/d) does not result in an increase in body fat compared to a lower protein diet in resistance-trained individuals.",
+  "key_findings": [
+    "Brak przyrostu tkanki tłuszczowej pomimo spożycia dodatkowych 800 kcal dziennie wyłącznie z białka.",
+    "Brak znaczących różnic w beztłuszczowej masie ciała między grupą wysokobiałkową a kontrolną."
+  ],
+  "practical_note": "Nadwyżka kaloryczna pochodząca wyłącznie z białka ma znikome szanse na odłożenie się w postaci tkanki tłuszczowej.",
+  "caveats": [
+    "Bardzo mała próba badawcza (n=30).",
+    "Krótki czas trwania badania (8 tygodni)."
+  ],
+  "status": "legal",
+  "flags": {
+    "is_industry_funded": false,
+    "is_preprint": false,
+    "has_full_text": true,
+    "needs_manual_review": false
+  },
+  "scraped_at": "2026-05-08T20:00:00Z"
+}
