@@ -3,7 +3,6 @@ import pytest
 from unittest.mock import AsyncMock, patch, MagicMock
 
 import httpx
-from pydantic import ValidationError
 
 from src.adapters.ai.gemma_ollama import GemmaOllamaAdapter
 from src.domain.errors import ExtractionError
