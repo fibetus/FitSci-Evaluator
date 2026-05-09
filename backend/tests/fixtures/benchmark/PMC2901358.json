@@ -1,0 +1,81 @@
+{
+  "id": "PMC2901358",
+  "pmid": "20581057",
+  "doi": "10.1152/japplphysiol.00282.2010",
+  "pmc_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2901358/",
+  "title": "Muscle hypertrophy induced by resistance training in rats",
+  "authors": ["Ogasawara R", "Sato K", "Matsutani K", "Nakazato K", "Fujita S"],
+  "journal": "Journal of Applied Physiology",
+  "year": 2010,
+  "impact_factor": 3.7,
+  "if_source": "lookup",
+  "citation_count": 80,
+  "is_open_access": true,
+  "is_preprint": false,
+  "funding_source": null,
+  "i_squared": null,
+  "type": "rct",
+  "topic": "hypertrophy",
+  "subtopic": "mTOR signaling",
+  "keywords": ["animal model", "hypertrophy", "resistance exercise", "mTOR"],
+  "sample_size": 24,
+  "duration_weeks": 4,
+  "population": {
+    "age_range": null,
+    "sex": "male",
+    "training_status": "untrained",
+    "health_status": "healthy"
+  },
+  "is_human_study": false,
+  "is_double_blind": false,
+  "is_placebo_controlled": false,
+  "is_preregistered": false,
+  "has_conflict_of_interest": false,
+  "primary_outcome": "Muscle cross-sectional area and mTOR activation",
+  "delta": {
+    "test_group_change_pct": 14.5,
+    "placebo_change_pct": 1.2,
+    "net_effect_pct": 13.3,
+    "effect_size": null,
+    "effect_size_type": null,
+    "p_value": 0.05,
+    "is_significant": true
+  },
+  "dosage": {
+    "amount": null,
+    "unit": null,
+    "protocol": "Isometric resistance exercise via electrical stimulation",
+    "timing": null
+  },
+  "score": -2,
+  "confidence": 10,
+  "quality_tier": "rejected",
+  "score_breakdown": {
+    "study_type_pts": -5,
+    "population_pts": 0,
+    "sample_size_pts": 0,
+    "recency_pts": -1,
+    "impact_factor_pts": 1,
+    "methodology_pts": 0,
+    "bias_pts": 0
+  },
+  "summary_pl": "Trening oporowy wywołany elektrostymulacją u szczurów znacząco zwiększył przekrój poprzeczny włókien mięśniowych oraz aktywację szlaku mTOR.",
+  "summary_en": "Resistance exercise induced by electrical stimulation in rats significantly increased muscle cross-sectional area and mTOR signaling activation.",
+  "key_findings": [
+    "Trening izometryczny u szczurów skutkował ok. 14% wzrostem masy mięśniowej.",
+    "Zanotowano silną korelację między aktywacją p70S6K a wzrostem mięśni."
+  ],
+  "practical_note": "Badanie nie ma bezpośredniego przełożenia na ludzi ze względu na model zwierzęcy.",
+  "caveats": [
+    "Badanie na modelu zwierzęcym (szczury) in vivo.",
+    "Trening wymuszany elektrostymulacją, a nie dobrowolny."
+  ],
+  "status": "unclear",
+  "flags": {
+    "is_industry_funded": false,
+    "is_preprint": false,
+    "has_full_text": true,
+    "needs_manual_review": true
+  },
+  "scraped_at": "2026-05-08T20:00:00Z"
+}

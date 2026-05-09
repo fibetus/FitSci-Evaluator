@@ -1,0 +1,81 @@
+{
+  "id": "PMC4941165",
+  "pmid": "27102172",
+  "doi": "10.1007/s40279-016-0543-8",
+  "pmc_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4941165/",
+  "title": "Effects of Resistance Training Frequency on Measures of Muscle Hypertrophy: A Systematic Review and Meta-Analysis",
+  "authors": ["Schoenfeld BJ", "Ogborn D", "Krieger JW"],
+  "journal": "Sports Medicine",
+  "year": 2016,
+  "impact_factor": 11.6,
+  "if_source": "lookup",
+  "citation_count": 550,
+  "is_open_access": true,
+  "is_preprint": false,
+  "funding_source": null,
+  "i_squared": 0.0,
+  "type": "meta-analysis",
+  "topic": "periodization",
+  "subtopic": "training frequency",
+  "keywords": ["hypertrophy", "resistance training", "frequency", "muscle mass"],
+  "sample_size": 334,
+  "duration_weeks": null,
+  "population": {
+    "age_range": "18-40",
+    "sex": "mixed",
+    "training_status": "mixed",
+    "health_status": "healthy"
+  },
+  "is_human_study": true,
+  "is_double_blind": false,
+  "is_placebo_controlled": false,
+  "is_preregistered": false,
+  "has_conflict_of_interest": false,
+  "primary_outcome": "Muscle hypertrophy measured by MRI, CT, or ultrasound",
+  "delta": {
+    "test_group_change_pct": 6.8,
+    "placebo_change_pct": 3.7,
+    "net_effect_pct": 3.1,
+    "effect_size": 0.49,
+    "effect_size_type": "hedges_g",
+    "p_value": 0.002,
+    "is_significant": true
+  },
+  "dosage": {
+    "amount": "2-3",
+    "unit": "days/week",
+    "protocol": "Higher frequency vs lower frequency",
+    "timing": null
+  },
+  "score": 12,
+  "confidence": 95,
+  "quality_tier": "high",
+  "score_breakdown": {
+    "study_type_pts": 5,
+    "population_pts": 2,
+    "sample_size_pts": 2,
+    "recency_pts": -1,
+    "impact_factor_pts": 2,
+    "methodology_pts": 2,
+    "bias_pts": 0
+  },
+  "summary_pl": "Większa częstotliwość treningu oporowego (2-3 razy w tygodniu na partię) prowadzi do znacznie większej hipertrofii mięśniowej niż trenowanie danej partii raz w tygodniu.",
+  "summary_en": "Higher frequency of resistance training (2-3 days per week per muscle group) produces significantly greater muscle hypertrophy than training a muscle group once a week.",
+  "key_findings": [
+    "Trening danej grupy mięśniowej 2x w tygodniu sprzyja lepszemu wzrostowi mięśni.",
+    "Brak jednoznacznych dowodów, że 3x w tygodniu jest lepsze niż 2x w tygodniu."
+  ],
+  "practical_note": "Zaleca się trenowanie każdej grupy mięśniowej minimum 2 razy w tygodniu w celu maksymalizacji hipertrofii.",
+  "caveats": [
+    "Większość badań w analizie dotyczyła niewytrenowanych osób.",
+    "Trudno oddzielić wpływ całkowitej objętości od częstotliwości."
+  ],
+  "status": "legal",
+  "flags": {
+    "is_industry_funded": false,
+    "is_preprint": false,
+    "has_full_text": true,
+    "needs_manual_review": false
+  },
+  "scraped_at": "2026-05-08T20:00:00Z"
+}

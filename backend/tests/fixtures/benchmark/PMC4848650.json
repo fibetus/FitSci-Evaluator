@@ -1,0 +1,81 @@
+{
+  "id": "PMC4848650",
+  "pmid": "27083049",
+  "doi": "10.3945/ajcn.115.127597",
+  "pmc_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4848650/",
+  "title": "Dietary Protein Intake and Muscle Mass: A Cohort Study",
+  "authors": ["Houston DK", "Tooze JA", "Garcia M"],
+  "journal": "The American Journal of Clinical Nutrition",
+  "year": 2016,
+  "impact_factor": 7.1,
+  "if_source": "lookup",
+  "citation_count": 210,
+  "is_open_access": true,
+  "is_preprint": false,
+  "funding_source": "NIH",
+  "i_squared": null,
+  "type": "cohort_prospective",
+  "topic": "protein",
+  "subtopic": "muscle mass preservation",
+  "keywords": ["aging", "muscle mass", "protein intake", "cohort study"],
+  "sample_size": 2000,
+  "duration_weeks": 156,
+  "population": {
+    "age_range": "70-79",
+    "sex": "mixed",
+    "training_status": "sedentary",
+    "health_status": "healthy"
+  },
+  "is_human_study": true,
+  "is_double_blind": false,
+  "is_placebo_controlled": false,
+  "is_preregistered": false,
+  "has_conflict_of_interest": false,
+  "primary_outcome": "Loss of lean body mass over 3 years",
+  "delta": {
+    "test_group_change_pct": -1.2,
+    "placebo_change_pct": -3.5,
+    "net_effect_pct": 2.3,
+    "effect_size": null,
+    "effect_size_type": null,
+    "p_value": 0.01,
+    "is_significant": true
+  },
+  "dosage": {
+    "amount": ">1.2",
+    "unit": "g/kg/d",
+    "protocol": "Dietary intake",
+    "timing": null
+  },
+  "score": 6,
+  "confidence": 60,
+  "quality_tier": "moderate",
+  "score_breakdown": {
+    "study_type_pts": 2,
+    "population_pts": 1,
+    "sample_size_pts": 2,
+    "recency_pts": -1,
+    "impact_factor_pts": 1,
+    "methodology_pts": 1,
+    "bias_pts": 0
+  },
+  "summary_pl": "Wieloletnie badanie kohortowe pokazało, że starsze osoby spożywające powyżej 1.2g białka na kg masy ciała traciły znacznie mniej beztłuszczowej masy ciała z wiekiem.",
+  "summary_en": "Higher dietary protein intake (above 1.2 g/kg/d) is associated with attenuated loss of lean muscle mass in older adults over a 3-year period.",
+  "key_findings": [
+    "Osoby o najwyższym spożyciu białka zachowały o ok. 40% więcej masy mięśniowej niż osoby z dolnego kwartyla.",
+    "Podaż białka >1.2 g/kg/d jest skuteczniejsza w zapobieganiu sarkopenii niż zalecane 0.8 g/kg/d."
+  ],
+  "practical_note": "Osoby starsze powinny spożywać znacznie więcej białka (min. 1.2 g/kg/d) w celu spowolnienia utraty mięśni.",
+  "caveats": [
+    "Badanie nie uwzględnia wpływu treningu oporowego.",
+    "Bazuje na kwestionariuszach żywieniowych, co jest obarczone błędem przypominania."
+  ],
+  "status": "legal",
+  "flags": {
+    "is_industry_funded": false,
+    "is_preprint": false,
+    "has_full_text": true,
+    "needs_manual_review": false
+  },
+  "scraped_at": "2026-05-08T20:00:00Z"
+}
