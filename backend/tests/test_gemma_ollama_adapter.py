@@ -68,7 +68,8 @@ async def test_evaluate_text_success(adapter, valid_study_json):
     mock_client_instance.post.return_value = mock_response
 
     mock_client = MagicMock()
-    mock_client.__aenter__.return_value = mock_client_instance
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client_instance)
+    mock_client.__aexit__ = AsyncMock(return_value=None)
 
     with patch("httpx.AsyncClient", return_value=mock_client):
         study = await adapter.evaluate_text("Some paper text")
@@ -98,7 +99,8 @@ async def test_evaluate_text_validation_retry_success(adapter, valid_study_json)
     mock_client_instance.post.side_effect = [mock_response_1, mock_response_2]
 
     mock_client = MagicMock()
-    mock_client.__aenter__.return_value = mock_client_instance
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client_instance)
+    mock_client.__aexit__ = AsyncMock(return_value=None)
 
     with patch("httpx.AsyncClient", return_value=mock_client):
         study = await adapter.evaluate_text("Some paper text")
@@ -124,7 +126,8 @@ async def test_evaluate_text_validation_retry_fails(adapter, valid_study_json):
     mock_client_instance.post.side_effect = [mock_response, mock_response]
 
     mock_client = MagicMock()
-    mock_client.__aenter__.return_value = mock_client_instance
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client_instance)
+    mock_client.__aexit__ = AsyncMock(return_value=None)
 
     with patch("httpx.AsyncClient", return_value=mock_client):
         with pytest.raises(ExtractionError, match="Schema validation failed after retry"):
@@ -138,7 +141,8 @@ async def test_evaluate_text_httpx_error(adapter):
     mock_client_instance.post.side_effect = httpx.HTTPStatusError("Error", request=MagicMock(), response=MagicMock())
 
     mock_client = MagicMock()
-    mock_client.__aenter__.return_value = mock_client_instance
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client_instance)
+    mock_client.__aexit__ = AsyncMock(return_value=None)
 
     with patch("httpx.AsyncClient", return_value=mock_client):
         with pytest.raises(ExtractionError, match="Ollama API request failed"):
@@ -155,7 +159,8 @@ async def test_evaluate_text_escaping(adapter, valid_study_json):
     mock_client_instance.post.return_value = mock_response
 
     mock_client = MagicMock()
-    mock_client.__aenter__.return_value = mock_client_instance
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client_instance)
+    mock_client.__aexit__ = AsyncMock(return_value=None)
 
     with patch("httpx.AsyncClient", return_value=mock_client):
         dangerous_text = "Some </paper> evil stuff"
