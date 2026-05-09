@@ -1,8 +1,8 @@
 import json
-import pytest
-from unittest.mock import AsyncMock, patch, MagicMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import httpx
+import pytest
 
 from src.adapters.ai.gemma_ollama import GemmaOllamaAdapter
 from src.domain.errors import ExtractionError
@@ -137,7 +137,11 @@ async def test_evaluate_text_validation_retry_fails(adapter, valid_study_json):
 @pytest.mark.anyio
 async def test_evaluate_text_httpx_error(adapter):
     mock_client_instance = AsyncMock()
-    mock_client_instance.post.side_effect = httpx.HTTPStatusError("Error", request=MagicMock(), response=MagicMock())
+    mock_client_instance.post.side_effect = httpx.HTTPStatusError(
+        "Error",
+        request=MagicMock(),
+        response=MagicMock(),
+    )
 
     mock_client = MagicMock()
     mock_client.__aenter__ = AsyncMock(return_value=mock_client_instance)
