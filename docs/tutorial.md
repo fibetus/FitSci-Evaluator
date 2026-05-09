@@ -86,7 +86,7 @@ Try running an animal study:
 ```bash
 python -m src.cli.main evaluate PMC2901358
 ```
-You will notice the `quality_tier` is strictly set to `"rejected"` and the `score` goes into the negatives because `is_human_study` is `false`.
+You will notice the `quality_tier` is strictly set to `"rejected"` because `is_human_study` is `false`. The final published `score` is clamped to `0`, while the `score_breakdown` will still show the negative penalties that drove the raw total below zero.
 
 ---
 
