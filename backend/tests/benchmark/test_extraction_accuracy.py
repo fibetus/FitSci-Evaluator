@@ -125,7 +125,8 @@ async def test_extraction_accuracy() -> None:
             try:
                 actual_study = await evaluator.evaluate_text(raw_text)
             except ExtractionError as e:
-                if isinstance(e.__cause__, httpx.RequestError):
+                cause = e.__cause__
+                if isinstance(cause, httpx.RequestError):
                     connectivity_failures.append(pmc_id)
                     continue
                 raise
@@ -149,15 +150,21 @@ async def test_extraction_accuracy() -> None:
         if not f1_scores:
             if connectivity_failures:
                 sample_ids = ", ".join(connectivity_failures[:3])
+                extra = (
+                    f" (+{len(connectivity_failures) - 3} more)"
+                    if len(connectivity_failures) > 3
+                    else ""
+                )
                 pytest.skip(
                     "No benchmark fixtures were evaluable due to Ollama/network request failures. "
-                    f"Affected fixtures include: {sample_ids}"
+                    f"Affected fixtures include: {sample_ids}{extra}"
                 )
             elif fetch_failures:
                 sample_ids = ", ".join(fetch_failures[:3])
+                extra = f" (+{len(fetch_failures) - 3} more)" if len(fetch_failures) > 3 else ""
                 pytest.skip(
                     "No benchmark fixtures were evaluable due to PMC fetch failures. "
-                    f"Affected fixtures include: {sample_ids}"
+                    f"Affected fixtures include: {sample_ids}{extra}"
                 )
             else:
                 pytest.skip("No benchmark fixtures could be evaluated successfully.")
