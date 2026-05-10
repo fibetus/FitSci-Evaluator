@@ -224,18 +224,24 @@ __marimo__/
 # Docs policy:
 # - Track top-level docs markdown files (including scoring_basis.md)
 # - Track docs/adr/*.md (Architecture Decision Records)
-# - Track internal audit markdown files
+# - Track docs/audit/**/*.md (project audit reports — pre/post-phase)
 # - Do not track private/internal reference materials (PDFs, CLAUDE.md, skills notes, etc.)
 docs/*
 !docs/*.md
 !docs/adr/
 docs/adr/*
 !docs/adr/*.md
+!docs/audit/
+docs/audit/*
+!docs/audit/*.md
+!docs/audit/before-phase-0/
+docs/audit/before-phase-0/*
+!docs/audit/before-phase-0/*.md
+!docs/audit/after-phase-1/
+docs/audit/after-phase-1/*
+!docs/audit/after-phase-1/*.md
 !docs/internal/
 docs/internal/*
-!docs/internal/audit/
-docs/internal/audit/*
-!docs/internal/audit/*.md
 docs/internal/private/
 docs/*.pdf
 
