@@ -151,7 +151,7 @@ async def test_extraction_accuracy() -> None:
                 pytest.skip(
                     "No benchmark fixtures were evaluable due to Ollama/network request failures."
                 )
-            if fetch_failures:
+            elif fetch_failures:
                 pytest.skip("No benchmark fixtures were evaluable due to PMC fetch failures.")
             else:
                 pytest.skip("No benchmark fixtures could be evaluated successfully.")
