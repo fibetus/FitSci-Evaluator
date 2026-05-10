@@ -103,6 +103,7 @@ async def test_extraction_accuracy() -> None:
     evaluator = GemmaOllamaAdapter()
     
     f1_scores: list[float] = []
+    connectivity_failures: list[str] = []
     
     fixture_files = list(FIXTURES_DIR.glob("*.json"))
     if not fixture_files:
@@ -124,7 +125,9 @@ async def test_extraction_accuracy() -> None:
                 actual_study = await evaluator.evaluate_text(raw_text)
             except ExtractionError as e:
                 if isinstance(e.__cause__, (httpx.ConnectError, httpx.RequestError)):
-                    pytest.skip("Ollama is not running. Start Ollama to run this test.")
+                    connectivity_failures.append(pmc_id)
+                    print(f"Skipping {pmc_id}: Ollama is not reachable ({e.__cause__})")
+                    continue
                 raise
             except Exception as e:
                 pytest.fail(f"Evaluator failed on {pmc_id}: {e}")
@@ -144,6 +147,8 @@ async def test_extraction_accuracy() -> None:
             f1_scores.append(f1)
             
         if not f1_scores:
+            if connectivity_failures:
+                pytest.skip("Ollama is not running. Start Ollama to run this test.")
             pytest.skip("No benchmark fixtures could be evaluated successfully.")
 
         avg_f1 = sum(f1_scores) / len(f1_scores)
