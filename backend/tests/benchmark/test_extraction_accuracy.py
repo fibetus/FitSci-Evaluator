@@ -125,7 +125,7 @@ async def test_extraction_accuracy() -> None:
             except ExtractionError as e:
                 if isinstance(e.__cause__, (httpx.ConnectError, httpx.RequestError)):
                     pytest.skip("Ollama is not running. Start Ollama to run this test.")
-                pytest.fail(f"Evaluator failed on {pmc_id}: {e}")
+                raise
             except Exception as e:
                 pytest.fail(f"Evaluator failed on {pmc_id}: {e}")
                 
