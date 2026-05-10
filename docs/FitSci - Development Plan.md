@@ -136,7 +136,8 @@ Wire Ingestor → Sifter → Judge → CLI end-to-end with **no mock data**. Eve
 - ✅ Task 2 complete: `GemmaOllamaAdapter` exists at `backend/src/adapters/ai/gemma_ollama.py` implementing `EvaluatorPort` with prompt-injection defenses and Pydantic validation retry logic. Tested via mock in `backend/tests/test_gemma_ollama_adapter.py`.
 - ✅ Task 3 complete: `Benchmark fixture set` exists in `backend/tests/fixtures/benchmark/*.json` with 5 hand-curated real PMC IDs representing different study topologies.
 - ✅ Task 4 complete: `EvaluateStudyUseCase` implemented in `backend/src/application/use_cases/evaluate_study.py`, correctly wiring the `IngestorPort`, `EvaluatorPort`, `ScoringService`, and `RepositoryPort` with logging and error propagation.
-- ⏳ Tasks 5–6 pending (CLI rewrite, extraction-accuracy harness).
+- ✅ Task 5 complete: `CLI rewrite` completed in `backend/src/cli/main.py` using `EvaluateStudyUseCase` and new adapters (`InMemoryStudyRepository`, `ConsoleLogger`, `SystemClock`). `--mock` flag is available.
+- ⏳ Task 6 pending (extraction-accuracy harness).
 
 **Cross-cutting requirements** (see `Cross-Cutting Concerns.md`)
 - Structured JSON logging via `LoggerPort`; every adapter call gets a correlation ID.
