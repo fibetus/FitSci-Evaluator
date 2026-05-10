@@ -149,7 +149,8 @@ async def test_extraction_accuracy() -> None:
         if not f1_scores:
             if connectivity_failures:
                 pytest.skip("Ollama is not running. Start Ollama to run this test.")
-            pytest.skip("No benchmark fixtures could be evaluated successfully.")
+            else:
+                pytest.skip("No benchmark fixtures could be evaluated successfully.")
 
         avg_f1 = sum(f1_scores) / len(f1_scores)
         assert avg_f1 >= 0.80, f"Average F1 score is {avg_f1:.2f}, expected >= 0.80"
