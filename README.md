@@ -60,7 +60,7 @@ The full plan with measurable Definitions of Done, time-boxes, cross-cutting con
 | Phase | Goal | Status | Budget |
 |---|---|---|---|
 | **0 — Foundation** | ADRs, error taxonomy, `LoggerPort`/`ClockPort`, application layer skeleton, CI bootstrap | ✅ done | 1 day |
-| **1 — Core Scientist (CLI)** | Real Ingestor + real Gemma + Judge end-to-end on 5 benchmark PMCIDs; **no mock data** | 🚧 in progress (`PMCAdapter` implemented) | 3 days |
+| **1 — Core Scientist (CLI)** | Real Ingestor + real Gemma + Judge end-to-end on 5 benchmark PMCIDs; **no mock data** | ✅ done | 3 days |
 | **2 — Bridge (FastAPI)** | Versioned `/api/v1/`, idempotent `POST /evaluate` with job IDs, Postgres + Alembic, OpenAPI snapshot | ⏳ | 2 days |
 | **Schema-freeze gate** | `Study` model becomes immutable v1 contract | ⏳ | — |
 | **3 — Bio-Signal Dashboard** | React migration onto codegen'd typed client; visual parity with legacy app | ⏳ | 2 days |
@@ -98,8 +98,7 @@ poetry install
 fitsci-evaluate PMC12345
 ```
 
-> **Note (current state):** the CLI still uses hardcoded mock data. Phase 1 progress: `PMCAdapter` is implemented (NCBI E-utilities + local raw-byte cache + tests), while `GemmaOllamaAdapter` and use-case/CLI wiring are still pending.
-
+> **Note (current state):** Phase 1 is complete. The CLI now uses real components (`EvaluateStudyUseCase`, `PMCAdapter`, `GemmaOllamaAdapter`) connecting to PMC and Ollama. Use the `--mock` flag to run the legacy hardcoded mock offline.
 ## 7. Stack (locked — see [docs/adr/](./docs/adr/README.md))
 
 | Layer | Choice | ADR |
