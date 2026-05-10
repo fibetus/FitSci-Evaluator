@@ -1,17 +1,16 @@
 import json
 import os
 from pathlib import Path
+from typing import Any
 
 import httpx
 import pytest
 
 from src.adapters.ai.gemma_ollama import GemmaOllamaAdapter
 from src.adapters.scrapers.pmc import PMCAdapter
+from src.domain.errors import ExtractionError
 
 FIXTURES_DIR = Path(__file__).parent.parent / "fixtures" / "benchmark"
-
-
-from typing import Any
 
 def compute_f1(expected: dict[str, Any], actual: dict[str, Any]) -> float:
     """
@@ -94,7 +93,7 @@ def compute_f1(expected: dict[str, Any], actual: dict[str, Any]) -> float:
     return 2 * (precision * recall) / (precision + recall)
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 @pytest.mark.skipif(
     not os.environ.get("RUN_BENCHMARK"),
     reason="Set RUN_BENCHMARK=1 to run expensive extraction harness.",
@@ -103,7 +102,7 @@ async def test_extraction_accuracy() -> None:
     pmc_adapter = PMCAdapter()
     evaluator = GemmaOllamaAdapter()
     
-    f1_scores = []
+    f1_scores: list[float] = []
     
     fixture_files = list(FIXTURES_DIR.glob("*.json"))
     if not fixture_files:
@@ -118,12 +117,15 @@ async def test_extraction_accuracy() -> None:
             try:
                 raw_text = await pmc_adapter.fetch_by_id(pmc_id)
             except Exception as e:
-                pytest.skip(f"Could not fetch PMC data for {pmc_id}: {e}")
+                print(f"Skipping {pmc_id}: could not fetch PMC data ({e})")
+                continue
                 
             try:
                 actual_study = await evaluator.evaluate_text(raw_text)
-            except httpx.ConnectError:
-                pytest.skip("Ollama is not running. Start Ollama to run this test.")
+            except ExtractionError as e:
+                if isinstance(e.__cause__, (httpx.ConnectError, httpx.RequestError)):
+                    pytest.skip("Ollama is not running. Start Ollama to run this test.")
+                pytest.fail(f"Evaluator failed on {pmc_id}: {e}")
             except Exception as e:
                 pytest.fail(f"Evaluator failed on {pmc_id}: {e}")
                 
@@ -141,7 +143,10 @@ async def test_extraction_accuracy() -> None:
             f1 = compute_f1(gold_data, actual_data)
             f1_scores.append(f1)
             
-        avg_f1 = sum(f1_scores) / len(f1_scores) if f1_scores else 0.0
+        if not f1_scores:
+            pytest.skip("No benchmark fixtures could be evaluated successfully.")
+
+        avg_f1 = sum(f1_scores) / len(f1_scores)
         assert avg_f1 >= 0.80, f"Average F1 score is {avg_f1:.2f}, expected >= 0.80"
         
     finally:
