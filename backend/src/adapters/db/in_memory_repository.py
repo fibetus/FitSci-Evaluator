@@ -35,7 +35,7 @@ class InMemoryStudyRepository(RepositoryPort):
         if year_from is not None:
             results = [s for s in results if s.year >= year_from]
 
-        # Sort by ID or scraped_at just to be deterministic
+        # Sort by ID to keep results deterministic
         results.sort(key=lambda s: s.id)
 
         return results[offset : offset + limit]
