@@ -46,6 +46,12 @@ If you are debugging or extending a specific area, jump straight to the matching
 | [FitSci - Cross-Cutting Concerns.md](./FitSci%20-%20Cross-Cutting%20Concerns.md) | Logging, errors, caching, prompt-injection, secrets, CI | Active — v1.0 |
 | [FitSci - Risk Register.md](./FitSci%20-%20Risk%20Register.md) | What can go wrong, scored, with mitigations and owners | Active — v1.0 |
 
+### Phase Summaries
+
+| Document | Purpose | Status |
+|---|---|---|
+| [phase_1_summary.md](./phase_1_summary.md) | The Core "Scientist" MVP Phase 1 Summary & Walkthrough | ✅ Complete |
+
 ---
 
 ## 3. Architecture Decision Records (`docs/adr/`)
@@ -58,6 +64,7 @@ If you are debugging or extending a specific area, jump straight to the matching
 | [0002](./adr/0002-scoring-canonical-spec.md) | `scoring_basis.md` is the canonical Judge spec | Accepted | 2026-05-06 | v1 = `scoring_basis.md` (code); v2 = `Research Evaluation Model.md` (target). CI enforces co-modification |
 | [0003](./adr/0003-database-postgres-jsonb.md) | PostgreSQL with JSONB-first schema | Accepted | 2026-05-06 | One row per `Study` aggregate; promoted columns for filtering; `pgvector` upgrade path |
 | [0004](./adr/0004-gemma4-12b-q4km.md) | Gemma 4 12B Q4_K_M for production; 4B for CI/dev | Accepted | 2026-05-06 | Ollama (local/CI) ↔ Vertex AI (prod); 12B is the smallest variant reliably emitting nested 30-field JSON |
+| [0005](./adr/0005-extraction-accuracy-f1-metric.md) | Extraction Accuracy F1 Metric | Accepted | 2026-05-10 | Flattened structural F1 metric computing partial matches for lists and strings |
 
 ADR README and template guidance: [adr/README.md](./adr/README.md).
 

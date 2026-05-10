@@ -119,7 +119,7 @@ be committed from the codebase itself.
 
 ---
 
-### Phase 1 — The Core "Scientist" (CLI MVP) (3 days)  🚧
+### Phase 1 — The Core "Scientist" (CLI MVP) (3 days)  ✅
 
 Wire Ingestor → Sifter → Judge → CLI end-to-end with **no mock data**. Even if only one PMCID flows through cleanly, the full chain must run.
 
@@ -137,7 +137,7 @@ Wire Ingestor → Sifter → Judge → CLI end-to-end with **no mock data**. Eve
 - ✅ Task 3 complete: `Benchmark fixture set` exists in `backend/tests/fixtures/benchmark/*.json` with 5 hand-curated real PMC IDs representing different study topologies.
 - ✅ Task 4 complete: `EvaluateStudyUseCase` implemented in `backend/src/application/use_cases/evaluate_study.py`, correctly wiring the `IngestorPort`, `EvaluatorPort`, `ScoringService`, and `RepositoryPort` with logging and error propagation.
 - ✅ Task 5 complete: `CLI rewrite` completed in `backend/src/cli/main.py` using `EvaluateStudyUseCase` and new adapters (`InMemoryStudyRepository`, `ConsoleLogger`, `SystemClock`). `--mock` flag is available.
-- ⏳ Task 6 pending (extraction-accuracy harness).
+- ✅ Task 6 complete: Extraction-accuracy harness created in `backend/tests/benchmark/test_extraction_accuracy.py` computing field-level F1 (>= 80% threshold).
 
 **Cross-cutting requirements** (see `Cross-Cutting Concerns.md`)
 - Structured JSON logging via `LoggerPort`; every adapter call gets a correlation ID.
