@@ -118,8 +118,8 @@ async def test_extraction_accuracy() -> None:
             pmc_id = gold_data["id"]
             try:
                 raw_text = await pmc_adapter.fetch_by_id(pmc_id)
-            except Exception as e:
-                fetch_failures.append(f"{pmc_id}: {e}")
+            except Exception:
+                fetch_failures.append(pmc_id)
                 continue
                 
             try:
@@ -148,11 +148,17 @@ async def test_extraction_accuracy() -> None:
             
         if not f1_scores:
             if connectivity_failures:
+                sample_ids = ", ".join(connectivity_failures[:3])
                 pytest.skip(
-                    "No benchmark fixtures were evaluable due to Ollama/network request failures."
+                    "No benchmark fixtures were evaluable due to Ollama/network request failures. "
+                    f"Affected fixtures include: {sample_ids}"
                 )
             elif fetch_failures:
-                pytest.skip("No benchmark fixtures were evaluable due to PMC fetch failures.")
+                sample_ids = ", ".join(fetch_failures[:3])
+                pytest.skip(
+                    "No benchmark fixtures were evaluable due to PMC fetch failures. "
+                    f"Affected fixtures include: {sample_ids}"
+                )
             else:
                 pytest.skip("No benchmark fixtures could be evaluated successfully.")
 
