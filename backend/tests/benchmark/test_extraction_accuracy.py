@@ -104,6 +104,7 @@ async def test_extraction_accuracy() -> None:
     
     f1_scores: list[float] = []
     connectivity_failures: list[str] = []
+    fetch_failures: list[str] = []
     
     fixture_files = list(FIXTURES_DIR.glob("*.json"))
     if not fixture_files:
@@ -118,19 +119,14 @@ async def test_extraction_accuracy() -> None:
             try:
                 raw_text = await pmc_adapter.fetch_by_id(pmc_id)
             except Exception as e:
-                print(f"Skipping {pmc_id}: could not fetch PMC data ({e})")
+                fetch_failures.append(f"{pmc_id}: {e}")
                 continue
                 
             try:
                 actual_study = await evaluator.evaluate_text(raw_text)
             except ExtractionError as e:
-                if isinstance(e.__cause__, httpx.ConnectError):
-                    connectivity_failures.append(pmc_id)
-                    print(f"Skipping {pmc_id}: Ollama is not reachable ({e.__cause__})")
-                    continue
                 if isinstance(e.__cause__, httpx.RequestError):
                     connectivity_failures.append(pmc_id)
-                    print(f"Skipping {pmc_id}: Ollama request failed ({e.__cause__})")
                     continue
                 raise
             except Exception as e:
@@ -155,6 +151,8 @@ async def test_extraction_accuracy() -> None:
                 pytest.skip(
                     "No benchmark fixtures were evaluable due to Ollama/network request failures."
                 )
+            if fetch_failures:
+                pytest.skip("No benchmark fixtures were evaluable due to PMC fetch failures.")
             else:
                 pytest.skip("No benchmark fixtures could be evaluated successfully.")
 
