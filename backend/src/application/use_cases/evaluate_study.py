@@ -1,10 +1,13 @@
+import time
 from dataclasses import dataclass
 
+from src.domain.errors import ExtractionError, FitSciError, IngestionError, RepositoryError
 from src.domain.models.study import Study
 from src.domain.ports.clock import ClockPort
 from src.domain.ports.evaluator import EvaluatorPort
 from src.domain.ports.ingestor import IngestorPort
 from src.domain.ports.logger import LoggerPort
+from src.domain.ports.metrics import MetricsPort
 from src.domain.ports.repository import RepositoryPort
 from src.domain.services.scoring import ScoringService
 
@@ -17,52 +20,76 @@ class EvaluateStudyUseCase:
     logger: LoggerPort
     clock: ClockPort
     scorer: type[ScoringService] = ScoringService
+    metrics: MetricsPort | None = None
 
     async def execute(self, study_id: str) -> Study:
         """
         Phase 1 end-to-end evaluation workflow:
         Wires Ingestor -> Evaluator -> Scorer -> Repository.
         """
+        started = time.perf_counter()
         log = self.logger.with_context(study_id=study_id)
         log.info("evaluation_started")
 
-        # 1. Ingest
         try:
             raw_text = await self.ingestor.fetch_by_id(study_id)
             log.info("ingestion_completed", length=len(raw_text))
-        except Exception as e:
-            log.error("ingestion_failed", exc=e)
+        except IngestionError:
+            log.error("ingestion_failed")
             raise
+        except Exception as exc:
+            log.error("ingestion_failed", exc=exc)
+            raise IngestionError("Unexpected error during ingestion") from exc
 
-        # 2. Evaluate
         try:
-            study = await self.evaluator.evaluate_text(raw_text)
-            study.id = study_id
+            extraction = await self.evaluator.evaluate_text(raw_text)
+            study = extraction.into_study(study_id=study_id)
             log.info("evaluation_completed")
-        except Exception as e:
-            log.error("evaluation_failed", exc=e)
+        except ExtractionError:
+            log.error("evaluation_failed")
             raise
+        except Exception as exc:
+            log.error("evaluation_failed", exc=exc)
+            raise ExtractionError("Unexpected error during evaluation") from exc
 
-        # 3. Score
         try:
             scoring_result = self.scorer.calculate_rigor_index(study)
-            study.score = scoring_result.score
-            study.confidence = scoring_result.confidence
-            study.quality_tier = scoring_result.quality_tier
-            study.score_breakdown = scoring_result.score_breakdown
-            study.scraped_at = self.clock.now()
+            study = study.model_copy(
+                update={
+                    "score": scoring_result.score,
+                    "confidence": scoring_result.confidence,
+                    "quality_tier": scoring_result.quality_tier,
+                    "score_breakdown": scoring_result.score_breakdown,
+                    "scraped_at": self.clock.now(),
+                }
+            )
             log.info("scoring_completed", score=study.score, tier=study.quality_tier)
-        except Exception as e:
-            log.error("scoring_failed", exc=e)
+        except FitSciError:
+            log.error("scoring_failed")
             raise
+        except Exception as exc:
+            log.error("scoring_failed", exc=exc)
+            raise ExtractionError("Unexpected error during scoring") from exc
 
-        # 4. Persist
         try:
             await self.repository.save(study)
             log.info("persistence_completed")
-        except Exception as e:
-            log.error("persistence_failed", exc=e)
+        except RepositoryError:
+            log.error("persistence_failed")
             raise
+        except Exception as exc:
+            log.error("persistence_failed", exc=exc)
+            raise RepositoryError("Unexpected error during persistence") from exc
 
-        log.info("evaluation_succeeded")
+        total_latency_ms = int((time.perf_counter() - started) * 1000)
+        if self.metrics is not None:
+            self.metrics.record_evaluation(
+                study_id=study_id,
+                score=study.score,
+                quality_tier=study.quality_tier,
+                confidence=study.confidence,
+                total_latency_ms=total_latency_ms,
+            )
+
+        log.info("evaluation_succeeded", total_latency_ms=total_latency_ms)
         return study
