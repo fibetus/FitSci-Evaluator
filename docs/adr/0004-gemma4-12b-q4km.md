@@ -3,7 +3,7 @@
 * **Status:** Accepted
 * **Date:** 2026-05-06
 * **Decision drivers:** structured-extraction over long inputs; consumer-GPU local-dev story; "5-line LLM swap" promise; cost discipline.
-* **Related:** [`audit-gemma4-selection.md`](../internal/audit/audit-gemma4-selection.md), [`audit-gemma4-features.md`](../internal/audit/audit-gemma4-features.md).
+* **Related:** [`audit-gemma4-selection.md`](../audit/before-phase-0/audit-gemma4-selection.md), [`audit-gemma4-features.md`](../audit/before-phase-0/audit-gemma4-features.md).
 * **Confidence note:** at the time this ADR was written, Gemma 4's exact size variants and licensing terms were not confirmed in `/docs`. The reasoning below assumes Gemma 4 follows the Gemma 3 family (270M / 1B / 4B / 12B / 27B). If shipping Gemma 4 changes the size points, re-bucket using the same task-fit logic and supersede this ADR.
 
 ## Context
@@ -25,7 +25,7 @@ The Sifter (M2) extracts a 30+-field `Study` JSON from raw PMC paper text (typic
 | **Local dev** | Gemma 4 **12B** Q4_K_M (or 4B Q4_K_M on weak hardware) | Q4_K_M | Ollama | `GemmaOllamaAdapter` |
 | **CI** | Gemma 4 **4B** Q4_K_M, **or** recorded responses | Q4_K_M | Ollama (self-hosted runner) **or** `GemmaReplayAdapter` | `GemmaOllamaAdapter` / `GemmaReplayAdapter` |
 | **Hackathon demo** | Gemma 4 12B Q4_K_M, **local Ollama only** | Q4_K_M | Ollama | `GemmaOllamaAdapter` |
-| **Phase 4 features (lay translator, p-hack sniffer, comparator, citation triage)** | Gemma 4 **4B** Q4_K_M | Q4_K_M | Ollama (default) | feature-specific adapters behind feature-specific ports — see [`audit-gemma4-features.md`](../internal/audit/audit-gemma4-features.md) |
+| **Phase 4 features (lay translator, p-hack sniffer, comparator, citation triage)** | Gemma 4 **4B** Q4_K_M | Q4_K_M | Ollama (default) | feature-specific adapters behind feature-specific ports — see [`audit-gemma4-features.md`](../audit/before-phase-0/audit-gemma4-features.md) |
 | **Phase 4 conversational co-pilot** | Gemma 4 **12B** | bf16 | Vertex AI streaming | `CopilotPort` adapter |
 
 ### Hardening (every adapter must apply)
@@ -52,7 +52,7 @@ The Sifter (M2) extracts a 30+-field `Study` JSON from raw PMC paper text (typic
 
 ## Upgrade threshold to 27B (quantitative)
 
-Defined in [`audit-gemma4-selection.md §4`](../internal/audit/audit-gemma4-selection.md). Summary:
+Defined in [`audit-gemma4-selection.md §4`](../audit/before-phase-0/audit-gemma4-selection.md). Summary:
 
 | Trigger | Threshold | Action |
 |---|---|---|
@@ -61,7 +61,7 @@ Defined in [`audit-gemma4-selection.md §4`](../internal/audit/audit-gemma4-sele
 | Reasoning-heavy fields | <70% agreement with Opus 4 evaluator | Reconsider whether the task should leave the LLM at all. |
 | Domain fine-tune is in scope | Always | Fine-tune 12B first. Skip 27B. |
 
-**Rule of thumb:** if you find yourself wanting 27B, try fine-tuning 12B first ([`audit-finetuning-pipeline.md`](../internal/audit/audit-finetuning-pipeline.md)).
+**Rule of thumb:** if you find yourself wanting 27B, try fine-tuning 12B first ([`audit-finetuning-pipeline.md`](../audit/before-phase-0/audit-finetuning-pipeline.md)).
 
 ## Consequences
 
@@ -69,7 +69,7 @@ Defined in [`audit-gemma4-selection.md §4`](../internal/audit/audit-gemma4-sele
 * **Local dev works on a single 12 GB GPU.** Confirmed by the Q4_K_M ~7 GB footprint.
 * **CI runs deterministically.** 4B in self-hosted runners or recorded fixtures keep CI free and stable.
 * **Production scale is one config flip.** Flipping the env var swaps `GemmaOllamaAdapter` for `GemmaVertexAIAdapter`.
-* **Phase 4 fine-tune is unblocked.** A QLoRA-adapted Gemma 4 12B is just another `EvaluatorPort` adapter behind a routing layer ([`audit-finetuning-pipeline.md §4`](../internal/audit/audit-finetuning-pipeline.md)).
+* **Phase 4 fine-tune is unblocked.** A QLoRA-adapted Gemma 4 12B is just another `EvaluatorPort` adapter behind a routing layer ([`audit-finetuning-pipeline.md §4`](../audit/before-phase-0/audit-finetuning-pipeline.md)).
 
 ### Negative
 * **Quantization risk on edge cases.** Q4 occasionally tips JSON across validity. Mitigated by `format=json` + Pydantic retry + Q8 reference run on demand.

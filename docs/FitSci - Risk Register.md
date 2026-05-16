@@ -3,7 +3,7 @@
 **Version:** v1.0 (post-audit, 2026-05-06)
 **Owner:** Project lead
 **Review cadence:** End of each phase, plus any incident
-**Source:** [`internal/audit/audit-development-plan.md §4`](./internal/audit/audit-development-plan.md), [`internal/audit/audit-architecture.md §3`](./internal/audit/audit-architecture.md), [`internal/audit/audit-finetuning-pipeline.md §5`](./internal/audit/audit-finetuning-pipeline.md)
+**Source:** [`audit/before-phase-0/audit-development-plan.md §4`](./audit/before-phase-0/audit-development-plan.md), [`audit/before-phase-0/audit-architecture.md §3`](./audit/before-phase-0/audit-architecture.md), [`audit/before-phase-0/audit-finetuning-pipeline.md §5`](./audit/before-phase-0/audit-finetuning-pipeline.md)
 
 This document tracks every known risk to FitSci - Evaluator and the mitigation strategy. Risks are scored by **Likelihood × Impact** on a 1–5 scale; risks with `L × I ≥ 12` are **flagged red** and require an explicit mitigation milestone in the [Development Plan](./FitSci%20-%20Development%20Plan.md).
 
@@ -67,7 +67,7 @@ This document tracks every known risk to FitSci - Evaluator and the mitigation s
 
 | ID | Risk | L | I | Mitigation | Phase | Status |
 |---|---|---|---|---|---|---|
-| R21 | Catastrophic forgetting in fine-tuned Gemma | 3 | 4 | Out-of-domain regression test as release gate ([`audit-finetuning-pipeline.md §3.5`](./internal/audit/audit-finetuning-pipeline.md)); QLoRA preserves base | 4 | 📦 |
+| R21 | Catastrophic forgetting in fine-tuned Gemma | 3 | 4 | Out-of-domain regression test as release gate ([`audit-finetuning-pipeline.md §3.5`](./audit/before-phase-0/audit-finetuning-pipeline.md)); QLoRA preserves base | 4 | 📦 |
 | R22 | Dataset poisoning by low-quality blogs | 3 | 4 | Source allow-list; methodology-score gate; adversarial probe set | 4 | 📦 |
 | R23 | Evaluator (Opus 4) bias on Polish content | 3 | 3 | Cross-validate on 100-item human-graded ground truth before bulk eval | 4 | 📦 |
 | R24 | Fine-tune leaks copyrighted text | 2 | 4 | License gate at scrape time; deduplication; recitation probes | 4 | 📦 |
@@ -124,4 +124,4 @@ This document tracks every known risk to FitSci - Evaluator and the mitigation s
 
 ---
 
-*Companion documents: [`FitSci - Development Plan.md`](./FitSci%20-%20Development%20Plan.md) · [`FitSci - Cross-Cutting Concerns.md`](./FitSci%20-%20Cross-Cutting%20Concerns.md) · [`internal/audit/audit-development-plan.md`](./internal/audit/audit-development-plan.md).*
+*Companion documents: [`FitSci - Development Plan.md`](./FitSci%20-%20Development%20Plan.md) · [`FitSci - Cross-Cutting Concerns.md`](./FitSci%20-%20Cross-Cutting%20Concerns.md) · [`audit/before-phase-0/audit-development-plan.md`](./audit/before-phase-0/audit-development-plan.md).*

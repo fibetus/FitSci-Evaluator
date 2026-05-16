@@ -83,6 +83,18 @@ async def test_search_returns_normalized_pmcids() -> None:
 
 
 @pytest.mark.anyio
+async def test_fetch_by_id_raises_on_http_error(tmp_path: Path) -> None:
+    def handler(_: httpx.Request) -> httpx.Response:
+        return httpx.Response(503, content=b"unavailable")
+
+    transport = httpx.MockTransport(handler)
+    async with httpx.AsyncClient(transport=transport) as client:
+        adapter = PMCAdapter(client=client, cache_dir=tmp_path)
+        with pytest.raises(IngestionError, match="Unable to fetch PMCID"):
+            await adapter.fetch_by_id("PMC12345")
+
+
+@pytest.mark.anyio
 async def test_search_empty_query_returns_empty_list() -> None:
     transport = httpx.MockTransport(lambda _: httpx.Response(500))
     async with httpx.AsyncClient(transport=transport) as client:

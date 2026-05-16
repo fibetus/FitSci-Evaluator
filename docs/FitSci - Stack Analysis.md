@@ -24,7 +24,7 @@ This document evaluates the technological path for **FitSci - Evaluator**, compa
 * **AI ecosystem:** the entire Gemma 4 toolchain (Kaggle Hub, Transformers, Ollama, Vertex AI Python SDK) is Python-native.
 * **Integration:** the ingestor is Python; unifying behind one FastAPI app keeps the stack coherent.
 * **Speed:** FastAPI is fast enough; AI workflows benefit far more from Python ergonomics than from Node throughput.
-* **OpenAPI for free:** FastAPI emits OpenAPI 3 out of the box, which we feed into `openapi-typescript` for the React frontend (kills hand-synced type drift — see [`audit-architecture.md §4.3`](./internal/audit/audit-architecture.md)).
+* **OpenAPI for free:** FastAPI emits OpenAPI 3 out of the box, which we feed into `openapi-typescript` for the React frontend (kills hand-synced type drift — see [`audit-architecture.md §4.3`](./audit/before-phase-0/audit-architecture.md)).
 
 ---
 
@@ -40,7 +40,7 @@ A **headless architecture**:
 
 1. **Don't throw away the gold.** The Bio-Signal UI is a major hackathon asset.
 2. **Logic where it belongs.** Python is the industry standard for LLM orchestration.
-3. **The 5-line LLM swap is real.** Switching from local Gemma (Ollama) to cloud Gemma (Vertex AI) means swapping `GemmaOllamaAdapter` for `GemmaVertexAIAdapter` in the composition root — see [`audit-gemma4-selection.md §3`](./internal/audit/audit-gemma4-selection.md).
+3. **The 5-line LLM swap is real.** Switching from local Gemma (Ollama) to cloud Gemma (Vertex AI) means swapping `GemmaOllamaAdapter` for `GemmaVertexAIAdapter` in the composition root — see [`audit-gemma4-selection.md §3`](./audit/before-phase-0/audit-gemma4-selection.md).
 
 ---
 
@@ -63,7 +63,7 @@ Real `PMCAdapter` + real `GemmaOllamaAdapter` + benchmark fixtures. **No mock da
 Codegen'd types from `/openapi.json`; mocks replaced with live calls; loading/empty/error states implemented; visual parity with the legacy app.
 
 ### Phase 4 — Fine-tuning + Feature Extensions (post-hackathon, 2–4 weeks)
-Gemma 4 12B QLoRA on a 5–10k curated dataset, deployed behind a `RoutingEvaluatorAdapter` for canary rollout. Six Gemma feature extensions (lay translator, p-hacking sniffer, comparator, myth-buster, citation triage, co-pilot). Full design in [`audit-finetuning-pipeline.md`](./internal/audit/audit-finetuning-pipeline.md) and [`audit-gemma4-features.md`](./internal/audit/audit-gemma4-features.md).
+Gemma 4 12B QLoRA on a 5–10k curated dataset, deployed behind a `RoutingEvaluatorAdapter` for canary rollout. Six Gemma feature extensions (lay translator, p-hacking sniffer, comparator, myth-buster, citation triage, co-pilot). Full design in [`audit-finetuning-pipeline.md`](./audit/before-phase-0/audit-finetuning-pipeline.md) and [`audit-gemma4-features.md`](./audit/before-phase-0/audit-gemma4-features.md).
 
 ---
 

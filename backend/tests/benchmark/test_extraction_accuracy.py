@@ -123,7 +123,7 @@ async def test_extraction_accuracy() -> None:
                 continue
                 
             try:
-                actual_study = await evaluator.evaluate_text(raw_text)
+                actual_extraction = await evaluator.evaluate_text(raw_text)
             except ExtractionError as e:
                 cause = e.__cause__
                 if isinstance(cause, httpx.RequestError):
@@ -133,7 +133,7 @@ async def test_extraction_accuracy() -> None:
             except Exception as e:
                 pytest.fail(f"Evaluator failed on {pmc_id}: {e}")
                 
-            actual_data = actual_study.model_dump()
+            actual_data = actual_extraction.model_dump()
             
             # Remove deterministic scoring fields and non-extracted metadata
             fields_to_ignore = [

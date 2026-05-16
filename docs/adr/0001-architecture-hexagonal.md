@@ -3,14 +3,14 @@
 * **Status:** Accepted
 * **Date:** 2026-05-06
 * **Decision drivers:** scientific-rigor ethos (deterministic Judge), Gemma model swappability, future fine-tuning track, CLI-to-UI development order.
-* **Related:** [`FitSci - Technical Architecture.md`](../FitSci%20-%20Technical%20Architecture.md), [`audit-architecture.md`](../internal/audit/audit-architecture.md).
+* **Related:** [`FitSci - Technical Architecture.md`](../FitSci%20-%20Technical%20Architecture.md), [`audit-architecture.md`](../audit/before-phase-0/audit-architecture.md).
 
 ## Context
 
 FitSci - Evaluator must:
 
 1. Run a **deterministic** scoring engine over Gemma-extracted study metadata. The Judge is the project's defensibility — it cannot live behind an LLM.
-2. **Swap LLM providers** without code changes inside the scoring rules: dev runs Gemma 4 via Ollama, production runs Gemma 4 via Vertex AI, Phase 4 introduces a fine-tuned Gemma adapter behind a routing layer ([`audit-finetuning-pipeline.md §4`](../internal/audit/audit-finetuning-pipeline.md)).
+2. **Swap LLM providers** without code changes inside the scoring rules: dev runs Gemma 4 via Ollama, production runs Gemma 4 via Vertex AI, Phase 4 introduces a fine-tuned Gemma adapter behind a routing layer ([`audit-finetuning-pipeline.md §4`](../audit/before-phase-0/audit-finetuning-pipeline.md)).
 3. Develop **inside-out (CLI → API → UI)** so the science core ships before any web surface is wired.
 4. Survive a frontend migration from a legacy React MVP onto a typed, codegen'd contract.
 
@@ -21,7 +21,7 @@ Adopt **Option A — Hexagonal (Ports & Adapters)** as defined in [`FitSci - Tec
 * `domain/` is pure: stdlib + Pydantic only.
 * `domain/ports/` defines `typing.Protocol` interfaces (structural typing).
 * `adapters/` is the **only** place permitted to import third-party SDKs (`httpx`, `asyncpg`, `ollama`, `google.cloud.aiplatform`, ...).
-* `application/use_cases/` orchestrates ports for one user-facing operation (the missing layer flagged in [`audit-architecture.md §3`](../internal/audit/audit-architecture.md)).
+* `application/use_cases/` orchestrates ports for one user-facing operation (the missing layer flagged in [`audit-architecture.md §3`](../audit/before-phase-0/audit-architecture.md)).
 * `cli/main.py` and `main.py` (FastAPI) are the only **composition roots** — they construct adapters and inject them into use cases.
 
 ### Pydantic exception
@@ -57,8 +57,8 @@ Pydantic is **explicitly permitted in `domain/`** as a domain-validation library
 
 ## Compliance check
 
-* `tests/unit/test_imports.py` (Phase 0) statically asserts that `domain/` modules only import `pydantic`, stdlib, or other `domain/` modules.
-* CI mypy `--strict` catches accidental `from sqlalchemy import` lines in `domain/`.
+* CI `mypy --strict` on `backend/src` catches accidental third-party imports inside `domain/` (e.g. `from sqlalchemy import`).
+* `tests/unit/test_imports.py` AST-guards that `domain/` modules only import Pydantic, stdlib, or other `domain/` packages.
 
 ---
 

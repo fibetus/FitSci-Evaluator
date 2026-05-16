@@ -44,7 +44,7 @@ The current implementation (v1, **0–14 scale**) is documented in [`scoring_bas
 * *"High-quality study — consider implementing this technique."*
 * *"Small sample size — treat as a curiosity; do not change your plan."*
 
-A future Phase 4 feature ([`audit-gemma4-features.md §2`](./internal/audit/audit-gemma4-features.md)) will fill the `summary_pl` / `summary_en` fields with NTS-style 3-sentence summaries via a 4B Gemma adapter.
+A future Phase 4 feature ([`audit-gemma4-features.md §2`](./audit/before-phase-0/audit-gemma4-features.md)) will fill the `summary_pl` / `summary_en` fields with NTS-style 3-sentence summaries via a 4B Gemma adapter.
 
 ## 4. Target Audience
 

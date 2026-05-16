@@ -3,7 +3,7 @@
 * **Status:** Accepted
 * **Date:** 2026-05-06
 * **Decision drivers:** the `Study` aggregate is document-shaped; multilingual (Polish + English) full-text search is required; future `pgvector` upgrade path is desirable; Phase 4 fine-tune requires durable evaluation logs.
-* **Related:** [`audit-database.md`](../internal/audit/audit-database.md), [`FitSci - Directory Structure.md`](../FitSci%20-%20Directory%20Structure.md).
+* **Related:** [`audit-database.md`](../audit/before-phase-0/audit-database.md), [`FitSci - Directory Structure.md`](../FitSci%20-%20Directory%20Structure.md).
 
 ## Context
 
@@ -20,7 +20,7 @@ Read patterns are simple: list with filters by `topic`/`quality_tier`/`min_score
 
 Use **PostgreSQL 16+ with a JSONB-first schema** behind a `RepositoryPort`. Do **not** normalize `Study` into 6+ relational tables. Promote a small set of columns from the JSONB document for cheap filtering.
 
-### Schema sketch (full version in [`audit-database.md §1`](../internal/audit/audit-database.md))
+### Schema sketch (full version in [`audit-database.md §1`](../audit/before-phase-0/audit-database.md))
 
 ```sql
 CREATE TABLE studies (
@@ -59,7 +59,7 @@ CREATE INDEX idx_studies_document_gin ON studies USING GIN (document jsonb_path_
 | **MongoDB** | "The data is document-shaped" | Loses ACID across multiple ops, mature migrations, multilingual FTS, and `pgvector`; no practical benefit at this scale |
 | **PostgreSQL + JSONB (chosen)** | Document ergonomics + ACID + FTS + `pgvector` upgrade path | — |
 
-The full comparison table is in [`audit-database.md §2`](../internal/audit/audit-database.md).
+The full comparison table is in [`audit-database.md §2`](../audit/before-phase-0/audit-database.md).
 
 ## Consequences
 
@@ -74,9 +74,9 @@ The full comparison table is in [`audit-database.md §2`](../internal/audit/audi
 * **Promoted-column duplication.** `topic`, `quality_tier`, `score`, `year` exist both in the JSONB document and as flat columns. The repository writes both atomically; no inconsistency is allowed (test in `tests/integration/test_repository_roundtrip.py`).
 
 ### Neutral
-* If the project is later forced onto a single-binary deployment (no Docker), the hexagonal port absorbs the swap to SQLite — that is the explicit fallback plan in [`audit-database.md §3`](../internal/audit/audit-database.md).
+* If the project is later forced onto a single-binary deployment (no Docker), the hexagonal port absorbs the swap to SQLite — that is the explicit fallback plan in [`audit-database.md §3`](../audit/before-phase-0/audit-database.md).
 
-## Anti-patterns to avoid (from [`audit-database.md §5`](../internal/audit/audit-database.md))
+## Anti-patterns to avoid (from [`audit-database.md §5`](../audit/before-phase-0/audit-database.md))
 
 * Importing `sqlmodel`, `sqlalchemy`, or `asyncpg` from anywhere inside `domain/`.
 * Making `Study` inherit from `SQLModel` (the canonical leak).

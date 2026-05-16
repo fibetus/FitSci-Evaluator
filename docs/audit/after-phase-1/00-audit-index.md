@@ -8,8 +8,8 @@
 | Audited by | Claude Opus (automated adversarial audit) |
 | Audit type | post-Phase-1 |
 | Repository commit context | working tree at the time of read |
-| Honest completion rate | **65.9%** (14.5 / 22 items) — see [`06-dod-honesty-table.md`](./06-dod-honesty-table.md) |
-| Overall project health score | **5.5 / 10** |
+| Honest completion rate | **~91%** after remediation — see [`08-remediation-progress.md`](./08-remediation-progress.md) |
+| Overall project health score | **8.5 / 10** (post architecture hardening) |
 
 ---
 
@@ -71,5 +71,8 @@ The recommended remediation order is in [`07-remediation-plan.md`](./07-remediat
 | [`05-test-quality.md`](./05-test-quality.md) | Test inventory, integration-test honesty, security-test depth, coverage configuration, missing coverage list |
 | [`06-dod-honesty-table.md`](./06-dod-honesty-table.md) | The full DoD honesty table with a per-row verdict and the 65.9% honest completion rate |
 | [`07-remediation-plan.md`](./07-remediation-plan.md) | Per-finding fix specification with effort estimate and Phase-2-blocking flag |
+| [`08-remediation-progress.md`](./08-remediation-progress.md) | Remediation checklist with verification commands (2026-05-16) |
+| [`09-architectural-integrity-recheck.md`](./09-architectural-integrity-recheck.md) | Post-remediation hexagonal contract re-check; LLM-swap verification; R-12 … R-17 |
+| [`10-architecture-hardening-progress.md`](./10-architecture-hardening-progress.md) | R-12 … R-17 implementation checklist (2026-05-16) |
 
 *All findings cite a file path and line number. Confidence levels are stated in-line whenever a finding could not be verified due to a missing file.*

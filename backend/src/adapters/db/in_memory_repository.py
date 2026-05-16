@@ -1,15 +1,27 @@
+import time
 from typing import Dict, List, Optional
 
 from ...domain.models.study import QualityTier, Study, StudyTopic
+from ...domain.ports.logger import LoggerPort, NullLogger
 from ...domain.ports.repository import RepositoryPort
 
 
 class InMemoryStudyRepository(RepositoryPort):
-    def __init__(self) -> None:
+    def __init__(self, logger: LoggerPort | None = None) -> None:
         self._storage: Dict[str, Study] = {}
+        self._logger = logger or NullLogger()
 
     async def save(self, study: Study) -> None:
+        started = time.perf_counter()
         self._storage[study.id] = study
+        self._logger.info(
+            "repository_save",
+            outcome="ok",
+            duration_ms=int((time.perf_counter() - started) * 1000),
+            port="RepositoryPort",
+            adapter="InMemoryStudyRepository",
+            study_id=study.id,
+        )
 
     async def get_by_id(self, study_id: str) -> Optional[Study]:
         return self._storage.get(study_id)

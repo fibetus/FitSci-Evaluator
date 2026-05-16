@@ -2,7 +2,7 @@
 
 * **Status:** Accepted
 * **Date:** 2026-05-06
-* **Decision drivers:** spec/code drift surfaced in [`audit-architecture.md §3`](../internal/audit/audit-architecture.md); contributor confusion risk from two coexisting Rigor Index definitions.
+* **Decision drivers:** spec/code drift surfaced in [`audit-architecture.md §3`](../audit/before-phase-0/audit-architecture.md); contributor confusion risk from two coexisting Rigor Index definitions.
 * **Related:** [`scoring_basis.md`](../scoring_basis.md), [`FitSci - Research Evaluation Model.md`](../FitSci%20-%20Research%20Evaluation%20Model.md).
 
 ## Context
@@ -19,7 +19,7 @@ Two scoring specifications exist in the repo:
    - Anchored on MRI vs DEXA, trained vs untrained, Cohen's d, 95% CI width — derived from *"Badania naukowe w treningu siłowym: interpretacja"*.
    - **Not yet implemented.** Requires schema fields the current `Study` model does not have (e.g. `measurement_tool`).
 
-The audit ([`audit-architecture.md §3`](../internal/audit/audit-architecture.md)) flagged this as the project's most dangerous drift: anyone reading the product narrative would expect a different Judge than the one that ships.
+The audit ([`audit-architecture.md §3`](../audit/before-phase-0/audit-architecture.md)) flagged this as the project's most dangerous drift: anyone reading the product narrative would expect a different Judge than the one that ships.
 
 A previous code reference to a missing `GEMINI.md` file made this worse. That reference has been replaced with a citation of `scoring_basis.md`, but the doc-side reconciliation still needs to be made formal so it cannot regress.
 

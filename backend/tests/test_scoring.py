@@ -242,3 +242,65 @@ def test_calculate_rigor_index_does_not_mutate_study():
     assert study.model_dump() == before
     assert study.score == 0
     assert scored_study.score_breakdown.bias_pts == -2
+
+
+def test_determinism() -> None:
+    study = Study(
+        id="PMC42",
+        pmc_url="https://example.com",
+        title="X",
+        authors=["A"],
+        journal="J",
+        year=2024,
+        impact_factor=8.0,
+        type="rct_double_blind",
+        is_placebo_controlled=True,
+        topic="protein",
+        subtopic="x",
+        sample_size=120,
+        primary_outcome="Y",
+        population=Population(training_status="trained"),
+        citation_count=42,
+        i_squared=20.0,
+    )
+    first = ScoringService.calculate_rigor_index(study)
+    for _ in range(99):
+        assert ScoringService.calculate_rigor_index(study) == first
+
+
+def test_rigor_index_rct_crossover_study_type_points() -> None:
+    study = Study(
+        id="PMC601",
+        pmc_url="https://example.com",
+        title="Crossover RCT",
+        authors=["Author X"],
+        journal="Sports Med",
+        year=2023,
+        impact_factor=4.0,
+        type="rct_crossover",
+        topic="recovery",
+        subtopic="sleep",
+        sample_size=40,
+        primary_outcome="Performance",
+    )
+    scored = ScoringService.calculate_rigor_index(study)
+    assert scored.score_breakdown.study_type_pts == 3
+
+
+def test_rigor_index_case_study_study_type_points() -> None:
+    study = Study(
+        id="PMC602",
+        pmc_url="https://example.com",
+        title="Single case report",
+        authors=["Author Y"],
+        journal="Case Reports",
+        year=2021,
+        impact_factor=1.0,
+        type="case_study",
+        topic="injury",
+        subtopic="rehab",
+        sample_size=1,
+        primary_outcome="Pain score",
+    )
+    scored = ScoringService.calculate_rigor_index(study)
+    assert scored.score_breakdown.study_type_pts == 0

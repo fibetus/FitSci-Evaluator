@@ -17,7 +17,7 @@ The goal of FitSci is a **highly decoupled, modular system** where individual co
 * **Pros:**
   * **Ultimate decoupling.** Swap LLMs, databases, frontends with zero impact on core logic.
   * **Testability.** The Judge (Scoring) is testable without internet, AI, or DB.
-  * **Survives the Phase 4 fine-tuning track.** A fine-tuned Gemma adapter is a constructor swap, not a refactor (see [`audit-finetuning-pipeline.md §4`](./internal/audit/audit-finetuning-pipeline.md)).
+  * **Survives the Phase 4 fine-tuning track.** A fine-tuned Gemma adapter is a constructor swap, not a refactor (see [`audit-finetuning-pipeline.md §4`](./audit/before-phase-0/audit-finetuning-pipeline.md)).
 * **Cons:** higher initial setup time; requires strict interface definitions.
 
 ### Option B: Clean Layered (Standard Enterprise)
@@ -43,7 +43,7 @@ The chosen architecture supports two execution flows:
 1. **Standard path:** `Ingestor (M1) → Sifter (M2) → Judge (M3) → Vault (M4)`.
 2. **Evaluation-only path:** `User/CLI input → Sifter (M2) → Judge (M3) → Display`.
 
-Both flows are realized by the **application layer** (`backend/src/application/use_cases/`) — see [`audit-architecture.md §4.2`](./internal/audit/audit-architecture.md). Adapters are constructed at the composition root (`cli/main.py` for the CLI, `main.py` for FastAPI) and injected into the use cases.
+Both flows are realized by the **application layer** (`backend/src/application/use_cases/`) — see [`audit-architecture.md §4.2`](./audit/before-phase-0/audit-architecture.md). Adapters are constructed at the composition root (`cli/main.py` for the CLI, `main.py` for FastAPI) and injected into the use cases.
 
 ---
 
@@ -77,9 +77,9 @@ Both flows are realized by the **application layer** (`backend/src/application/u
 | Why hexagonal won, and what alternatives were considered | [`adr/0001-architecture-hexagonal.md`](./adr/0001-architecture-hexagonal.md) |
 | How the directory tree maps to ports and adapters | [`FitSci - Directory Structure.md`](./FitSci%20-%20Directory%20Structure.md) |
 | What gets built in which phase, and how DoD is measured | [`FitSci - Development Plan.md`](./FitSci%20-%20Development%20Plan.md) |
-| How LLM provider swap actually works (Ollama ↔ Vertex AI) | [`adr/0004-gemma4-12b-q4km.md`](./adr/0004-gemma4-12b-q4km.md) and [`audit-gemma4-selection.md`](./internal/audit/audit-gemma4-selection.md) |
-| What database choices look like behind the port | [`adr/0003-database-postgres-jsonb.md`](./adr/0003-database-postgres-jsonb.md) and [`audit-database.md`](./internal/audit/audit-database.md) |
-| The deep architecture audit | [`audit-architecture.md`](./internal/audit/audit-architecture.md) |
+| How LLM provider swap actually works (Ollama ↔ Vertex AI) | [`adr/0004-gemma4-12b-q4km.md`](./adr/0004-gemma4-12b-q4km.md) and [`audit-gemma4-selection.md`](./audit/before-phase-0/audit-gemma4-selection.md) |
+| What database choices look like behind the port | [`adr/0003-database-postgres-jsonb.md`](./adr/0003-database-postgres-jsonb.md) and [`audit-database.md`](./audit/before-phase-0/audit-database.md) |
+| The deep architecture audit | [`audit-architecture.md`](./audit/before-phase-0/audit-architecture.md) |
 
 ---
 

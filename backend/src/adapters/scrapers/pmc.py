@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import time
 from pathlib import Path
 from typing import Any
 from xml.etree import ElementTree
@@ -8,6 +9,7 @@ import httpx
 
 from src.domain.errors import IngestionError
 from src.domain.ports.ingestor import IngestorPort
+from src.domain.ports.logger import LoggerPort, NullLogger
 
 
 class PMCAdapter(IngestorPort):
@@ -22,19 +24,30 @@ class PMCAdapter(IngestorPort):
         client: httpx.AsyncClient | None = None,
         cache_dir: Path | None = None,
         tool: str = "fitsci-evaluator",
+        logger: LoggerPort | None = None,
     ) -> None:
         self._client = client
         self._owns_client = client is None
         self._cache_dir = cache_dir or (Path.home() / ".fitsci" / "cache" / "pmc")
         self._tool = tool
+        self._logger = logger or NullLogger()
         self._cache_dir.mkdir(parents=True, exist_ok=True)
 
     async def fetch_by_id(self, study_id: str) -> str:
         pmc_id = _normalize_pmc_id(study_id)
         cache_path = self._cache_dir / f"{pmc_id}.xml"
+        started = time.perf_counter()
 
         if cache_path.exists():
             raw_bytes = cache_path.read_bytes()
+            self._logger.info(
+                "pmc_fetch",
+                outcome="ok",
+                duration_ms=int((time.perf_counter() - started) * 1000),
+                port="IngestorPort",
+                adapter="PMCAdapter",
+                source="disk_cache",
+            )
         else:
             client = await self._get_client()
             try:
@@ -51,12 +64,28 @@ class PMCAdapter(IngestorPort):
                 response.raise_for_status()
                 raw_bytes = response.content
             except httpx.HTTPError as exc:
+                self._logger.error(
+                    "pmc_fetch",
+                    exc=exc,
+                    outcome="error",
+                    duration_ms=int((time.perf_counter() - started) * 1000),
+                    port="IngestorPort",
+                    adapter="PMCAdapter",
+                )
                 raise IngestionError(f"Unable to fetch PMCID {pmc_id}: {exc}") from exc
 
             if not raw_bytes.strip():
                 raise IngestionError(f"PMCID {pmc_id} returned an empty payload.")
 
             cache_path.write_bytes(raw_bytes)
+            self._logger.info(
+                "pmc_fetch",
+                outcome="ok",
+                duration_ms=int((time.perf_counter() - started) * 1000),
+                port="IngestorPort",
+                adapter="PMCAdapter",
+                source="network",
+            )
 
         try:
             return _xml_to_clean_text(raw_bytes)

@@ -4,7 +4,7 @@
 **Status:** PHASE 0 COMPLETE — Ready for Phase 1
 **Companion docs:** `FitSci - Research Evaluation Model.md` · `FitSci - Technical Architecture.md` · `FitSci - Directory Structure.md` · `FitSci - Stack Analysis.md` · `FitSci - Design.md` · `FitSci - Cross-Cutting Concerns.md` · `FitSci - Risk Register.md` · `scoring_basis.md` · `adr/`
 
-This is the definitive implementation roadmap for **FitSci - Evaluator** (Gemma 4 Good Hackathon). It folds the findings of `docs/internal/audit/*` into one executable plan: **Hexagonal Architecture** + **FastAPI / React hybrid stack** + **Bio-Signal design system**, sequenced inside-out (CLI → API → UI), with measurable Definitions of Done, time-boxes, cross-cutting requirements, and a risk register.
+This is the definitive implementation roadmap for **FitSci - Evaluator** (Gemma 4 Good Hackathon). It folds the findings of `docs/audit/before-phase-0/*` into one executable plan: **Hexagonal Architecture** + **FastAPI / React hybrid stack** + **Bio-Signal design system**, sequenced inside-out (CLI → API → UI), with measurable Definitions of Done, time-boxes, cross-cutting requirements, and a risk register.
 
 ---
 
@@ -47,7 +47,7 @@ The four modules in `audit-architecture.md §2` are confirmed:
 
 ### M1 — The Ingestor (scrapers & parsers)
 - **Responsibility:** fetch raw text from external sources.
-- **Port:** `domain/ports/ingestor.py` → `IngestorPort` with `fetch_by_id(id) -> RawDocument` and `search(query) -> list[RawDocument]`.
+- **Port:** `domain/ports/ingestor.py` → `IngestorPort` with `fetch_by_id(id) -> str` (cleaned UTF-8 text) and `search(query) -> list[str]` (PMC IDs).
 - **Adapters:** `adapters/scrapers/pmc.py` (NCBI E-utilities), `adapters/scrapers/pdf.py` (PyMuPDF for local files).
 - **DoD signals:** retrieves a known PMCID end-to-end with cleaned UTF-8 text; preserves section markers (`Abstract`, `Methods`, `Results`, `Discussion`).
 
