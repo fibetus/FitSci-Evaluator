@@ -1,12 +1,12 @@
 from typing import Protocol
 
-from ..models.study import Study
+from ..models.extraction import ExtractionResult
 
 
 class EvaluatorPort(Protocol):
-    async def evaluate_text(self, text: str) -> Study:
+    async def evaluate_text(self, text: str) -> ExtractionResult:
         """
-        Takes raw text from a publication and uses Gemma 4 
-        to extract structured data matching the Study model.
+        Extract structured methodology fields from raw publication text.
+        Scoring fields are owned by the Judge and must not be set here.
         """
         ...
