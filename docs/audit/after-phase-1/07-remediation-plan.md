@@ -229,11 +229,11 @@ A **Phase 2 blocker** is a finding whose unresolved status would either (a) forc
 * **Effort.** Small (45 min).
 * **Blocks Phase 2.** No, but high-leverage to prevent recurrence of the false-finish pattern.
 
-### R-10 — `INDEX.md` and `Directory Structure.md` reference `docs/audit/before-phase-0/` rather than the new `docs/audit/`
+### R-10 — docs still reference the pre-move `internal/audit/` location instead of `docs/audit/before-phase-0/`
 
-* **Description.** Step 0 of this audit moved `docs/audit/before-phase-0/*` to `docs/audit/before-phase-0/`. Several link references in the doc set still point to the old location: `docs/INDEX.md:75-86`, `docs/INDEX.md:79-86`, `docs/INDEX.md:111`, `docs/FitSci - Directory Structure.md:113-114`, `docs/FitSci - Cross-Cutting Concerns.md:5,40,53,64,65,133,329`, `docs/FitSci - Risk Register.md:6`. These links now 404.
+* **Description.** Earlier documentation referenced audit artifacts under `internal/audit/`, but the repository now stores them under `docs/audit/before-phase-0/`. Several links in the doc set were still using the old location at the time of this finding: `docs/INDEX.md:75-86`, `docs/INDEX.md:79-86`, `docs/INDEX.md:111`, `docs/FitSci - Directory Structure.md:113-114`, `docs/FitSci - Cross-Cutting Concerns.md:5,40,53,64,65,133,329`, `docs/FitSci - Risk Register.md:6`. Those references 404 until rewritten to the current path.
 * **File:line.** Multiple — see above.
-* **Required fix.** Global find-and-replace across `docs/`: `audit/before-phase-0/` → `audit/before-phase-0/`. Sanity-check ADR-0001 line 6, ADR-0002 line 5, ADR-0003 line 6, ADR-0004 line 6, which also reference the old path.
+* **Required fix.** Global find-and-replace across `docs/`: `internal/audit/` → `docs/audit/before-phase-0/` (or the correct relative variant for each file). Sanity-check ADR-0001 line 6, ADR-0002 line 5, ADR-0003 line 6, ADR-0004 line 6, which also reference the old path.
 * **Effort.** Small (30 min).
 * **Blocks Phase 2.** No.
 

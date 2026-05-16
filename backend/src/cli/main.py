@@ -24,12 +24,12 @@ from ..domain.services.scoring import ScoringService
 
 def _build_evaluator(*, logger: LoggerPort, metrics: MetricsPort) -> EvaluatorPort:
     base = GemmaOllamaAdapter(logger=logger)
-    cached: EvaluatorPort = CachedEvaluator(
-        base,
+    metered: EvaluatorPort = MeteredEvaluator(base, metrics=metrics, model=base.model_tag)
+    return CachedEvaluator(
+        metered,
         InMemoryCache(),
         model_tag=base.model_tag,
     )
-    return MeteredEvaluator(cached, metrics=metrics, model=base.model_tag)
 
 
 async def async_main() -> None:

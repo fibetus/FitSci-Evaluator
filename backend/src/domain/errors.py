@@ -10,6 +10,10 @@ class ExtractionError(FitSciError):
     """Raised when an evaluator cannot produce schema-valid extraction output."""
 
 
+class ScoringError(FitSciError):
+    """Raised when study scoring fails outside evaluator extraction concerns."""
+
+
 class ValidationError(FitSciError):
     """Raised when validated domain data cannot satisfy application invariants."""
 

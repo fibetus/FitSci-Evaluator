@@ -2,10 +2,13 @@ from unittest.mock import AsyncMock
 
 import pytest
 
+from src.adapters.ai.cached_evaluator import CachedEvaluator
 from src.adapters.ai.gemma_ollama import GemmaOllamaAdapter
 from src.adapters.ai.metered_evaluator import MeteredEvaluator
 from src.adapters.metrics.jsonl_metrics import JsonlMetrics
+from src.cli.main import _build_evaluator
 from src.domain.models.extraction import ExtractionResult
+from src.domain.ports.logger import NullLogger
 
 
 @pytest.mark.anyio
@@ -36,3 +39,13 @@ async def test_metered_evaluator_records_tokens_from_inner(tmp_path) -> None:
     payload = metrics_path.read_text(encoding="utf-8")
     assert '"prompt_tokens": 11' in payload
     assert '"completion_tokens": 22' in payload
+
+
+def test_build_evaluator_wraps_metering_inside_cache(tmp_path) -> None:
+    evaluator = _build_evaluator(
+        logger=NullLogger(),
+        metrics=JsonlMetrics(path=tmp_path / "metrics.jsonl"),
+    )
+
+    assert isinstance(evaluator, CachedEvaluator)
+    assert isinstance(evaluator._inner, MeteredEvaluator)

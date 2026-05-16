@@ -1,7 +1,13 @@
 import time
 from dataclasses import dataclass
 
-from src.domain.errors import ExtractionError, FitSciError, IngestionError, RepositoryError
+from src.domain.errors import (
+    ExtractionError,
+    FitSciError,
+    IngestionError,
+    RepositoryError,
+    ScoringError,
+)
 from src.domain.models.study import Study
 from src.domain.ports.clock import ClockPort
 from src.domain.ports.evaluator import EvaluatorPort
@@ -69,7 +75,7 @@ class EvaluateStudyUseCase:
             raise
         except Exception as exc:
             log.error("scoring_failed", exc=exc)
-            raise ExtractionError("Unexpected error during scoring") from exc
+            raise ScoringError("Unexpected error during scoring") from exc
 
         try:
             await self.repository.save(study)
@@ -83,13 +89,16 @@ class EvaluateStudyUseCase:
 
         total_latency_ms = int((time.perf_counter() - started) * 1000)
         if self.metrics is not None:
-            self.metrics.record_evaluation(
-                study_id=study_id,
-                score=study.score,
-                quality_tier=study.quality_tier,
-                confidence=study.confidence,
-                total_latency_ms=total_latency_ms,
-            )
+            try:
+                self.metrics.record_evaluation(
+                    study_id=study_id,
+                    score=study.score,
+                    quality_tier=study.quality_tier,
+                    confidence=study.confidence,
+                    total_latency_ms=total_latency_ms,
+                )
+            except Exception as exc:
+                log.warning("metrics_recording_failed", exception=str(exc))
 
         log.info("evaluation_succeeded", total_latency_ms=total_latency_ms)
         return study
