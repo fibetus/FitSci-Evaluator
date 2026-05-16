@@ -6,7 +6,7 @@ import pytest
 
 from src.adapters.ai.gemma_ollama import GemmaOllamaAdapter
 from src.domain.errors import ExtractionError
-from src.domain.models.study import Study
+from src.domain.models.extraction import ExtractionResult
 
 
 @pytest.fixture
@@ -71,9 +71,9 @@ async def test_evaluate_text_success(adapter, valid_study_json):
     mock_client.__aexit__ = AsyncMock(return_value=None)
 
     with patch("httpx.AsyncClient", return_value=mock_client):
-        study = await adapter.evaluate_text("Some paper text")
-        assert isinstance(study, Study)
-        assert study.id == "PMC123"
+        extraction = await adapter.evaluate_text("Some paper text")
+        assert isinstance(extraction, ExtractionResult)
+        assert extraction.id == "PMC123"
         assert mock_client_instance.post.call_count == 1
         
         # Check that prompt contains escaped paper
@@ -102,8 +102,8 @@ async def test_evaluate_text_validation_retry_success(adapter, valid_study_json)
     mock_client.__aexit__ = AsyncMock(return_value=None)
 
     with patch("httpx.AsyncClient", return_value=mock_client):
-        study = await adapter.evaluate_text("Some paper text")
-        assert isinstance(study, Study)
+        extraction = await adapter.evaluate_text("Some paper text")
+        assert isinstance(extraction, ExtractionResult)
         assert mock_client_instance.post.call_count == 2
         
         # Second call should include validation feedback
@@ -149,6 +149,24 @@ async def test_evaluate_text_httpx_error(adapter):
 
     with patch("httpx.AsyncClient", return_value=mock_client):
         with pytest.raises(ExtractionError, match="Ollama API request failed"):
+            await adapter.evaluate_text("Some paper text")
+
+
+@pytest.mark.anyio
+async def test_evaluate_text_handles_malformed_json(adapter):
+    mock_response = MagicMock()
+    mock_response.raise_for_status.return_value = None
+    mock_response.json.side_effect = json.JSONDecodeError("bad json", "", 0)
+
+    mock_client_instance = AsyncMock()
+    mock_client_instance.post.return_value = mock_response
+
+    mock_client = MagicMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client_instance)
+    mock_client.__aexit__ = AsyncMock(return_value=None)
+
+    with patch("httpx.AsyncClient", return_value=mock_client):
+        with pytest.raises(ExtractionError, match="Failed to decode Ollama response JSON"):
             await adapter.evaluate_text("Some paper text")
 
 
