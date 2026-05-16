@@ -37,7 +37,7 @@ ADRs are **append-only**: once accepted, do not edit; supersede with a new ADR t
 * Streamlit / Gradio for the frontend → see [ADR-0001](./0001-architecture-hexagonal.md) and [`FitSci - Stack Analysis.md`](../FitSci%20-%20Stack%20Analysis.md).
 * LangChain / LlamaIndex for orchestration → simple prompt-chaining inside `adapters/ai/` until a workload demonstrably needs a framework.
 * MongoDB / SQLite as primary storage → see [ADR-0003](./0003-database-postgres-jsonb.md).
-* RAG / vector search in v1 → see [`audit-database.md §6`](../internal/audit/audit-database.md).
+* RAG / vector search in v1 → see [`audit-database.md §6`](../audit/before-phase-0/audit-database.md).
 * Closed-weights frontier models for extraction → violates the Gemma 4 Good hackathon brief; see [ADR-0004](./0004-gemma4-12b-q4km.md).
 
 ---

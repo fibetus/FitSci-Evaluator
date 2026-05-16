@@ -24,6 +24,12 @@ We use a flattened structural F1 computation tailored for the 30+ field `Study` 
 5. **False Negatives (FN)**: Expected was populated, but model was empty or did not match.
 6. **Computation**: The standard harmonic mean of Precision and Recall is applied per document, and the final F1 is averaged across all benchmark fixtures.
 
+## Alternatives considered
+
+1. **Exact-match F1 on every flattened field** — Rejected because minor phrasing differences (e.g. `"1.2 g/kg/d"` vs `"1.2g/kg/d"`) and list ordering inflate false negatives without indicating extraction failure.
+2. **Jaccard similarity per field** — Rejected as too lenient on categorical fields (`type`, booleans) where partial overlap would count as correct when the model picked the wrong enum value.
+3. **BLEU / ROUGE on string fields** — Rejected because those metrics reward fluency and length overlap, not factual correctness of structured methodology fields.
+
 ## Consequences
 
 - Minor spelling mistakes or rewordings by Gemma (e.g., "1.2 g/kg/d" vs "1.2g/kg/d") might still trigger a false negative if they don't substring match exactly, but the partial match significantly increases the realism of the score compared to strict equality.
