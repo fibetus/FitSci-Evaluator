@@ -1,6 +1,6 @@
 # FitSci - Hexagonal Project Structure
 
-> **Status (2026-05-06):** Phase 0 foundation is implemented. Items already implemented in `backend/src/` are marked ✅; future Phase 1–3 items are marked 🚧 / ⏳. The CLI currently uses mock data; Phase 1 wires the real adapters.
+> **Status (2026-05-16):** Phase 1 core pipeline is implemented. Items in `backend/src/` are marked ✅; future Phase 2–4 items are marked ⏳ / 📦.
 
 The directory follows **Hexagonal Architecture** ([ADR-0001](./adr/0001-architecture-hexagonal.md)): pure domain core, ports as `typing.Protocol` interfaces, adapters as the **only** modules permitted to import infrastructure libraries (`httpx`, `asyncpg`, `sqlalchemy`, `ollama`, `google.cloud.aiplatform`, ...).
 
@@ -9,21 +9,22 @@ fitsci-evaluator/
 ├── backend/                        # Python (FastAPI) backend
 │   ├── src/
 │   │   ├── domain/                 # CORE — pure Python (Pydantic-only third-party dep)
-│   │   │   ├── models/             # ✅ Pydantic schemas (Study, Population, Delta, Dosage, ScoreBreakdown)
-│   │   │   │   └── study.py        # ✅ Study + StudyFlags
+│   │   │   ├── models/             # ✅ Pydantic schemas
+│   │   │   │   ├── study.py        # ✅ Study + StudyFlags (full aggregate)
+│   │   │   │   └── extraction.py   # ✅ ExtractionResult (Sifter output; no Judge fields)
 │   │   │   ├── services/           # ✅ Pure domain services
 │   │   │   │   └── scoring.py      # ✅ pure ScoringService returning ScoringResult
 │   │   │   ├── ports/              # ✅ Protocols (no implementation)
 │   │   │   │   ├── ingestor.py     # ✅
 │   │   │   │   ├── evaluator.py    # ✅
 │   │   │   │   ├── repository.py   # ✅ save/get_by_id/list_by/exists/delete
-│   │   │   │   ├── logger.py       # ✅ LoggerPort
+│   │   │   │   ├── logger.py       # ✅ LoggerPort + NullLogger
 │   │   │   │   ├── clock.py        # ✅ ClockPort
-│   │   │   │   ├── cache.py        # ⏳ CachePort for LLM responses (Phase 1)
-│   │   │   │   └── metrics.py      # ⏳ MetricsPort (Phase 1)
+│   │   │   │   ├── cache.py        # ✅ CachePort for LLM responses
+│   │   │   │   └── metrics.py      # ✅ MetricsPort
 │   │   │   └── errors.py           # ✅ Domain error taxonomy
 │   │   │
-│   │   ├── application/            # ⏳ USE-CASES — orchestrate ports for one user-facing operation
+│   │   ├── application/            # ✅ USE-CASES — orchestrate ports for one user-facing operation
 │   │   │   └── use_cases/
 │   │   │       ├── evaluate_study.py
 │   │   │       ├── get_study.py
@@ -31,24 +32,30 @@ fitsci-evaluator/
 │   │   │
 │   │   ├── adapters/               # OUTBOUND/INBOUND — implementations of ports
 │   │   │   ├── ai/
-│   │   │   │   ├── gemma_ollama.py        # 🚧 Phase 1
+│   │   │   │   ├── gemma_ollama.py        # ✅ Ollama Sifter (HTTP + prompt only)
+│   │   │   │   ├── cached_evaluator.py    # ✅ CachePort decorator
+│   │   │   │   ├── metered_evaluator.py  # ✅ MetricsPort decorator
+│   │   │   │   ├── gemma_replay.py        # ✅ CI / fixture EvaluatorPort
+│   │   │   │   ├── mock.py                # ✅ offline EvaluatorPort
 │   │   │   │   ├── gemma_vertex.py        # ⏳ Phase 2 / production
-│   │   │   │   ├── gemma_replay.py        # ⏳ CI / fixtures
-│   │   │   │   ├── routing_evaluator.py   # 📦 Phase 4 (canary / A-B between base and fine-tuned)
-│   │   │   │   └── prompts/               # versioned prompt templates
+│   │   │   │   ├── routing_evaluator.py   # 📦 Phase 4 (canary / A-B)
+│   │   │   │   └── prompts/
 │   │   │   │       └── extract_v1.txt
 │   │   │   ├── scrapers/
-│   │   │   │   ├── pmc.py                 # 🚧 Phase 1 — PMC E-utilities
+│   │   │   │   ├── pmc.py                 # ✅ PMC E-utilities
+│   │   │   │   ├── replay.py              # ✅ ReplayIngestorAdapter (CI)
+│   │   │   │   ├── mock_ingestor.py       # ✅ MockIngestorAdapter (offline CLI)
 │   │   │   │   └── pdf.py                 # ⏳ Local PDF via PyMuPDF
 │   │   │   ├── db/
 │   │   │   │   ├── postgres_study_repository.py  # ⏳ Phase 2
-│   │   │   │   └── in_memory_repository.py       # ⏳ Phase 1 — used by tests + CLI dev
-│   │   │   ├── logging/
-│   │   │   │   └── stdlib_logger.py       # ⏳ Phase 1 — adapts stdlib logging to LoggerPort
-│   │   │   ├── clock/
-│   │   │   │   └── system_clock.py        # ⏳ Phase 1
+│   │   │   │   └── in_memory_repository.py       # ✅ tests + CLI
+│   │   │   ├── system/
+│   │   │   │   ├── logger.py              # ✅ ConsoleLogger (JSON stderr)
+│   │   │   │   └── clock.py               # ✅ SystemClock
 │   │   │   ├── cache/
-│   │   │   │   └── in_memory_cache.py     # ⏳ Phase 1
+│   │   │   │   └── in_memory_cache.py     # ✅ Phase 1
+│   │   │   ├── metrics/
+│   │   │   │   └── jsonl_metrics.py       # ✅ Phase 1
 │   │   │   ├── api/                       # ⏳ Phase 2 — FastAPI routers + DI
 │   │   │   │   ├── routes/
 │   │   │   │   │   ├── studies.py
@@ -67,10 +74,10 @@ fitsci-evaluator/
 │   │
 │   ├── tests/
 │   │   ├── unit/                   # ✅ pure-domain tests; no adapters
-│   │   ├── integration/            # ⏳ adapter tests (real PostgreSQL via testcontainers, real Ollama)
-│   │   ├── benchmark/              # ⏳ Phase 1 — field-accuracy F1 vs gold fixtures
+│   │   ├── integration/            # ✅ pipeline, logging, cache tests
+│   │   ├── benchmark/              # ✅ F1 harness (`RUN_BENCHMARK=1`)
 │   │   ├── contract/               # ⏳ Phase 2 — OpenAPI snapshot test
-│   │   ├── security/               # ⏳ Phase 1 — prompt-injection probes
+│   │   ├── security/               # ✅ prompt-injection probes
 │   │   ├── e2e/                    # ⏳ Phase 3 — Playwright against running stack
 │   │   └── fixtures/
 │   │       └── benchmark/          # 🚧 Phase 1 — 5 hand-curated PMCID gold JSONs
@@ -130,7 +137,7 @@ fitsci-evaluator/
 
 ## 1. How modularity works in this structure
 
-* **Replacing Gemma 4.** Switch from `adapters/ai/gemma_ollama.py` to `adapters/ai/gemma_vertex.py`: change the constructor call in `main.py` (FastAPI DI) or `cli/main.py`. The domain never notices because it only depends on `EvaluatorPort`. See [ADR-0004](./adr/0004-gemma4-12b-q4km.md).
+* **Replacing Gemma 4.** Swap the base adapter in `_build_evaluator()` (`cli/main.py`): `GemmaOllamaAdapter` → `GemmaVertexAIAdapter`. Keep `CachedEvaluator` and `MeteredEvaluator` decorators unchanged. The domain only depends on `EvaluatorPort` → `ExtractionResult`. See [ADR-0004](./adr/0004-gemma4-12b-q4km.md).
 * **Replacing the database.** Same pattern: swap `PostgresStudyRepository` for `InMemoryStudyRepository` (tests) or a future `SqliteStudyRepository`. See [ADR-0003](./adr/0003-database-postgres-jsonb.md).
 * **CLI-first development.** `backend/src/cli/main.py` constructs the same `EvaluateStudyUseCase` as the FastAPI controller. Anything that works in the CLI works in the API.
 * **Direct-to-Gemma path.** A use case can construct `GemmaOllamaAdapter` and `ScoringService` directly without touching the scrapers — useful for `text-in / verdict-out` workflows.
