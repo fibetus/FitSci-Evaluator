@@ -12,7 +12,7 @@
 * **Master plan:** [docs/FitSci - Development Plan.md](./docs/FitSci%20-%20Development%20Plan.md) — phases, measurable DoDs, time-boxes, risks.
 * **Architecture:** [docs/FitSci - Technical Architecture.md](./docs/FitSci%20-%20Technical%20Architecture.md) · [docs/FitSci - Directory Structure.md](./docs/FitSci%20-%20Directory%20Structure.md) · [docs/adr/](./docs/adr/README.md).
 * **Scoring spec (v1, what runs):** [docs/scoring_basis.md](./docs/scoring_basis.md).
-* **Audit reports (post-implementation review):** [docs/internal/audit/](./docs/internal/audit/audit-index.md).
+* **Audit reports:** [docs/audit/](./docs/audit/README.md) (before Phase 0 and after Phase 1).
 
 ---
 
@@ -80,9 +80,19 @@ From the `backend` directory:
 
 ```bash
 pip install -r requirements.txt
-python -m pytest
+python -m pytest --cov --cov-report=term-missing
 python -m src.cli.main PMC12345
 ```
+
+### Git hooks (scoring spec guard)
+
+From the repository root, opt in once per clone:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+The pre-commit hook blocks commits that change `backend/src/domain/services/scoring.py` without updating `docs/scoring_basis.md` in the same commit.
 
 ### Console script
 
