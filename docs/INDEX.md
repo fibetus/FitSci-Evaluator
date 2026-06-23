@@ -45,6 +45,7 @@ If you are debugging or extending a specific area, jump straight to the matching
 | [FitSci - Design.md](./FitSci%20-%20Design.md) | Bio-Signal UI aesthetic, palette, components | Active |
 | [FitSci - Cross-Cutting Concerns.md](./FitSci%20-%20Cross-Cutting%20Concerns.md) | Logging, errors, caching, prompt-injection, secrets, CI | Active — v1.0 |
 | [FitSci - Risk Register.md](./FitSci%20-%20Risk%20Register.md) | What can go wrong, scored, with mitigations and owners | Active — v1.0 |
+| [FitSci - Message Broker Implementation Plan.md](./FitSci%20-%20Message%20Broker%20Implementation%20Plan.md) | How RabbitMQ will decouple evaluation from the API | Planned |
 
 ### Phase Summaries
 
@@ -65,6 +66,7 @@ If you are debugging or extending a specific area, jump straight to the matching
 | [0003](./adr/0003-database-postgres-jsonb.md) | PostgreSQL with JSONB-first schema | Accepted | 2026-05-06 | One row per `Study` aggregate; promoted columns for filtering; `pgvector` upgrade path |
 | [0004](./adr/0004-gemma4-12b-q4km.md) | Gemma 4 12B Q4_K_M for production; 4B for CI/dev | Accepted | 2026-05-06 | Ollama (local/CI) ↔ Vertex AI (prod); 12B is the smallest variant reliably emitting nested 30-field JSON |
 | [0005](./adr/0005-extraction-accuracy-f1-metric.md) | Extraction Accuracy F1 Metric | Accepted | 2026-05-10 | Flattened structural F1 metric computing partial matches for lists and strings |
+| [0006](./adr/0006-message-broker-rabbitmq.md) | Message Broker for Asynchronous LLM Evaluation | Accepted | 2026-06-24 | RabbitMQ chosen to decouple FastAPI requests from heavy Ollama inference via background worker queue |
 
 ADR README and template guidance: [adr/README.md](./adr/README.md).
 
@@ -114,6 +116,7 @@ ADR README and template guidance: [adr/README.md](./adr/README.md).
 | **Prompt-injection defense** | [Cross-Cutting Concerns.md §6](./FitSci%20-%20Cross-Cutting%20Concerns.md) | [Risk Register.md R4](./FitSci%20-%20Risk%20Register.md) |
 | **What can go wrong?** | [Risk Register.md](./FitSci%20-%20Risk%20Register.md) | [audit-development-plan.md §4](./audit/before-phase-0/audit-development-plan.md) |
 | **Bio-Signal UI aesthetic** | [Design.md](./FitSci%20-%20Design.md) | — |
+| **Asynchronous message processing** | [ADR-0006](./adr/0006-message-broker-rabbitmq.md) | [Message Broker Implementation Plan.md](./FitSci%20-%20Message%20Broker%20Implementation%20Plan.md) |
 
 ---
 
