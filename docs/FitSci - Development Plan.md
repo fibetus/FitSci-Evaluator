@@ -33,6 +33,7 @@ This is the definitive implementation roadmap for **FitSci - Evaluator** (Gemma 
 | AI engine — dev / CI / demo | Gemma 4 4B Q4_K_M via Ollama | ADR-0004 | Fits any laptop; sufficient for short-task adapters |
 | AI engine — production extraction | Gemma 4 12B Q4_K_M via Ollama (local) / Vertex AI (cloud) | ADR-0004 | 12B is the smallest variant that reliably emits the 30-field nested JSON over long inputs |
 | Database | PostgreSQL 16+ with JSONB-first schema; `pgvector` reserved for v2 | ADR-0003 | Document-shaped `Study` aggregate; full-text search; `pgvector` upgrade path |
+| Message Broker | RabbitMQ | ADR-0006 | Decouples fast FastAPI ingestion from slow local Ollama inference via a queue |
 | Migrations | Alembic | ADR-0003 | Versioned schema evolution |
 | Testing | `pytest` + `pytest-asyncio` + Hypothesis (selectively) | — | |
 | API contract | OpenAPI 3 → `openapi-typescript` codegen committed to `frontend/src/api/` | — | Eliminates hand-synced TS/Pydantic drift |
@@ -164,7 +165,7 @@ Wire Ingestor → Sifter → Judge → CLI end-to-end with **no mock data**. Eve
 Expose Phase 1 over HTTP with persistence, idempotency, and async-job semantics.
 
 **Tasks**
-1. **FastAPI scaffold** at `backend/src/main.py`. DI wiring constructs `PostgresStudyRepository`, `GemmaOllamaAdapter` (or `GemmaVertexAIAdapter` via env flag), and the use cases.
+1. **FastAPI scaffold** at `backend/src/main.py`. DI wiring constructs `PostgresStudyRepository`, `RabbitMQAdapter`, `GemmaOllamaAdapter` (or `GemmaVertexAIAdapter` via env flag), and the use cases.
 2. **`PostgresStudyRepository`** in `adapters/db/postgres_study_repository.py` with the JSONB-first schema from `audit-database.md §1`.
 3. **Alembic baseline.** `alembic/versions/0001_initial.py` creating the `studies` table with promoted columns + GIN index.
 4. **Endpoints (versioned at `/api/v1/`)**
@@ -175,6 +176,7 @@ Expose Phase 1 over HTTP with persistence, idempotency, and async-job semantics.
    - `GET /healthz` (liveness), `GET /readyz` (DB + Ollama reachable).
 5. **OpenAPI codegen** wired into the `frontend/` build (`npm run gen:api` calls `openapi-typescript` against the running backend; output committed to `frontend/src/api/types.ts`).
 6. **Cross-cutting middleware.** Request-ID middleware, structured logger, rate-limit (per-IP, 30 req/min on `/evaluate`), CORS allow-list from `.env`.
+7. **Background Worker Scaffold.** `backend/src/worker/main.py` consuming messages from RabbitMQ to execute `EvaluateStudyUseCase` decoupled from the API.
 
 **Definition of Done — Phase 2**
 

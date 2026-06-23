@@ -121,6 +121,7 @@ fitsci-evaluate PMC12345
 | Database | PostgreSQL 16+ with JSONB-first schema | [ADR-0003](./docs/adr/0003-database-postgres-jsonb.md) |
 | Migrations | Alembic | — |
 | API contract | OpenAPI 3 → `openapi-typescript` codegen | — |
+| Message Broker | RabbitMQ (async evaluation queue) | [ADR-0006](./docs/adr/0006-message-broker-rabbitmq.md) |
 
 > **Out of scope for v1:** Retrieval-Augmented Generation, vector search, multi-tenant authentication, real-time streaming. The system *evaluates* papers; it does not retrieve from them.
 

@@ -21,7 +21,8 @@ fitsci-evaluator/
 │   │   │   │   ├── logger.py       # ✅ LoggerPort + NullLogger
 │   │   │   │   ├── clock.py        # ✅ ClockPort
 │   │   │   │   ├── cache.py        # ✅ CachePort for LLM responses
-│   │   │   │   └── metrics.py      # ✅ MetricsPort
+│   │   │   │   ├── metrics.py      # ✅ MetricsPort
+│   │   │   │   └── broker.py       # ⏳ MessageBrokerPort (Phase 2)
 │   │   │   └── errors.py           # ✅ Domain error taxonomy
 │   │   │
 │   │   ├── application/            # ✅ USE-CASES — orchestrate ports for one user-facing operation
@@ -64,12 +65,14 @@ fitsci-evaluator/
 │   │   │   │   │   └── health.py
 │   │   │   │   ├── deps.py                # FastAPI Depends() wiring
 │   │   │   │   └── middleware.py          # request-ID, rate-limit, CORS
-│   │   │   └── jobs/                      # ⏳ Phase 2 — async-job adapter (asyncio.Queue for now)
-│   │   │       └── in_process_queue.py
+│   │   │   └── broker/                    # ⏳ Phase 2 — async message broker adapter
+│   │   │       └── rabbitmq_adapter.py    # ⏳ RabbitMQ publisher/consumer
 │   │   │
 │   │   ├── cli/                    # ✅ inbound CLI adapter
 │   │   │   └── main.py             # ✅ — Phase 1 swaps mock data for real use case
 │   │   │
+│   │   ├── worker/                 # ⏳ background worker process for RabbitMQ (Phase 2)
+│   │   │   └── main.py             # ⏳
 │   │   └── main.py                 # ⏳ FastAPI entrypoint (Phase 2)
 │   │
 │   ├── tests/
