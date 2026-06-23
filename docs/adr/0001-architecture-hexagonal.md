@@ -3,7 +3,7 @@
 * **Status:** Accepted
 * **Date:** 2026-05-06
 * **Decision drivers:** scientific-rigor ethos (deterministic Judge), Gemma model swappability, future fine-tuning track, CLI-to-UI development order.
-* **Related:** [`FitSci - Technical Architecture.md`](../FitSci%20-%20Technical%20Architecture.md), [`audit-architecture.md`](../audit/before-phase-0/audit-architecture.md).
+* **Related:** [`FitSci - Technical Architecture.md`](../architecture/FitSci%20-%20Technical%20Architecture.md), [`audit-architecture.md`](../audit/before-phase-0/audit-architecture.md).
 
 ## Context
 
@@ -16,7 +16,7 @@ FitSci - Evaluator must:
 
 ## Decision
 
-Adopt **Option A — Hexagonal (Ports & Adapters)** as defined in [`FitSci - Technical Architecture.md §1`](../FitSci%20-%20Technical%20Architecture.md):
+Adopt **Option A — Hexagonal (Ports & Adapters)** as defined in [`FitSci - Technical Architecture.md §1`](../architecture/FitSci%20-%20Technical%20Architecture.md):
 
 * `domain/` is pure: stdlib + Pydantic only.
 * `domain/ports/` defines `typing.Protocol` interfaces (structural typing).
@@ -25,7 +25,7 @@ Adopt **Option A — Hexagonal (Ports & Adapters)** as defined in [`FitSci - Tec
 * `cli/main.py` and `main.py` (FastAPI) are the only **composition roots** — they construct adapters and inject them into use cases.
 
 ### Pydantic exception
-Pydantic is **explicitly permitted in `domain/`** as a domain-validation library, not as infrastructure. This is a deliberate trade-off: rewriting field validation by hand would cost more than the (negligible) coupling benefit. Documented in [`FitSci - Directory Structure.md §2`](../FitSci%20-%20Directory%20Structure.md).
+Pydantic is **explicitly permitted in `domain/`** as a domain-validation library, not as infrastructure. This is a deliberate trade-off: rewriting field validation by hand would cost more than the (negligible) coupling benefit. Documented in [`FitSci - Directory Structure.md §2`](../architecture/FitSci%20-%20Directory%20Structure.md).
 
 ## Alternatives considered
 
@@ -50,7 +50,7 @@ Pydantic is **explicitly permitted in `domain/`** as a domain-validation library
 
 ### Negative
 * **Higher initial scaffolding cost.** Phase 0 exists specifically to pay this — `application/use_cases/`, `domain/errors.py`, `LoggerPort`, `ClockPort`.
-* **Discipline required.** Adapter authors must wrap third-party exceptions into the [`domain/errors.py`](../FitSci%20-%20Cross-Cutting%20Concerns.md) taxonomy; this is enforced by code review and by integration tests.
+* **Discipline required.** Adapter authors must wrap third-party exceptions into the [`domain/errors.py`](../architecture/FitSci%20-%20Cross-Cutting%20Concerns.md) taxonomy; this is enforced by code review and by integration tests.
 
 ### Neutral
 * `Study` is anemic (data + Pydantic validators only); behavior lives in `ScoringService`. This is the canonical "anemic domain model" pattern. We accept it as Pythonic and consistent with the rest of the LLM-pipeline ecosystem.

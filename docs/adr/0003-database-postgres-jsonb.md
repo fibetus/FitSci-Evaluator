@@ -3,7 +3,7 @@
 * **Status:** Accepted
 * **Date:** 2026-05-06
 * **Decision drivers:** the `Study` aggregate is document-shaped; multilingual (Polish + English) full-text search is required; future `pgvector` upgrade path is desirable; Phase 4 fine-tune requires durable evaluation logs.
-* **Related:** [`audit-database.md`](../audit/before-phase-0/audit-database.md), [`FitSci - Directory Structure.md`](../FitSci%20-%20Directory%20Structure.md).
+* **Related:** [`audit-database.md`](../audit/before-phase-0/audit-database.md), [`FitSci - Directory Structure.md`](../architecture/FitSci%20-%20Directory%20Structure.md).
 
 ## Context
 
