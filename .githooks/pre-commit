@@ -10,8 +10,8 @@ git_safe() {
 staged_files="$(git_safe diff --cached --name-only)"
 
 if printf '%s\n' "$staged_files" | grep -qx 'backend/src/domain/services/scoring.py'; then
-  if ! printf '%s\n' "$staged_files" | grep -qx 'docs/scoring_basis.md'; then
-    echo "scoring.py changed without docs/scoring_basis.md." >&2
+  if ! printf '%s\n' "$staged_files" | grep -qx 'docs/other/scoring_basis.md'; then
+    echo "scoring.py changed without docs/other/scoring_basis.md." >&2
     echo "Update the canonical scoring spec in the same commit." >&2
     exit 1
   fi
