@@ -2,7 +2,7 @@
 
 **Version:** v1.0 (post-audit, 2026-05-06)
 **Status:** Active baseline — Phase 0 guardrails are in place; later sections remain phase gates.
-**Source:** [`audit/before-phase-0/audit-development-plan.md §3`](./audit/before-phase-0/audit-development-plan.md), [`audit/before-phase-0/audit-architecture.md §4`](./audit/before-phase-0/audit-architecture.md), [`audit/before-phase-0/audit-gemma4-selection.md §6`](./audit/before-phase-0/audit-gemma4-selection.md)
+**Source:** [`audit/before-phase-0/audit-development-plan.md §3`](../audit/before-phase-0/audit-development-plan.md), [`audit/before-phase-0/audit-architecture.md §4`](../audit/before-phase-0/audit-architecture.md), [`audit/before-phase-0/audit-gemma4-selection.md §6`](../audit/before-phase-0/audit-gemma4-selection.md)
 
 This document covers **everything that does not belong to a single module** but must be present for the system to be production-grade. The audit flagged the absence of these concerns as the project's biggest tactical gap; this file makes each one **measurable** and assigns it to a specific phase milestone.
 
@@ -130,7 +130,7 @@ class ConfigurationError(FitSciError):
 ## 4. LLM response caching
 
 ### Why
-A re-evaluation of the same paper through the same model digest must hit cache, not re-run inference. See [`audit-gemma4-selection.md §6`](./audit/before-phase-0/audit-gemma4-selection.md).
+A re-evaluation of the same paper through the same model digest must hit cache, not re-run inference. See [`audit-gemma4-selection.md §6`](../audit/before-phase-0/audit-gemma4-selection.md).
 
 ### Port
 ```python
@@ -326,7 +326,7 @@ Targets are measured via `MetricsPort` records and Lighthouse CI for the fronten
 
 ## 14. Data deletion & retention
 
-- **Raw paper text** — never persisted (Extract & Discard pattern, [`audit-database.md §1`](./audit/before-phase-0/audit-database.md)).
+- **Raw paper text** — never persisted (Extract & Discard pattern, [`audit-database.md §1`](../audit/before-phase-0/audit-database.md)).
 - **Evaluations** — retained indefinitely in v1; the `studies` table grows monotonically.
 - **LLM cache** — TTL `30 days` by default; configurable.
 - **Logs** — `logs/*.jsonl` rotated daily; keep 14 days.
@@ -339,16 +339,16 @@ GDPR is **not in scope for v1** — no PII is collected. If user accounts ship i
 ## 15. Documentation discipline
 
 ### Rules
-- Any change to `backend/src/domain/services/scoring.py` requires a touched `docs/scoring_basis.md` in the same commit (CI-enforced).
-- Any change to a `domain/ports/*` Protocol requires a touched `docs/FitSci - Directory Structure.md` or a new ADR.
+- Any change to `backend/src/domain/services/scoring.py` requires a touched `docs/other/scoring_basis.md` in the same commit (CI-enforced).
+- Any change to a `domain/ports/*` Protocol requires a touched `docs/architecture/FitSci - Directory Structure.md` or a new ADR.
 - Any architectural decision affecting more than one module gets an ADR in `docs/adr/NNNN-*.md`.
 - Audits live in `docs/audit/before-phase-0/` and are versioned at the date of the audit; never edited in place after the fact (corrections go in a follow-up audit).
-- `docs/INDEX.md` is updated whenever a doc is added, removed, or substantially restructured.
+- `docs/index/INDEX.md` is updated whenever a doc is added, removed, or substantially restructured.
 
 ### Acceptance
 - `.githooks/pre-commit` blocks commits if `scoring.py` is staged without `scoring_basis.md`.
-- A CI step asserts `docs/INDEX.md` lists every `docs/*.md` file (excluding `internal/`).
+- A CI step asserts `docs/index/INDEX.md` lists every `docs/**/*.md` file (excluding `internal/`).
 
 ---
 
-*Companion documents: [`FitSci - Development Plan.md`](./FitSci%20-%20Development%20Plan.md) · [`FitSci - Risk Register.md`](./FitSci%20-%20Risk%20Register.md) · [`adr/`](./adr/README.md).*
+*Companion documents: [`FitSci - Development Plan.md`](./FitSci%20-%20Development%20Plan.md) · [`FitSci - Risk Register.md`](../other/FitSci%20-%20Risk%20Register.md) · [`adr/`](../adr/README.md).*

@@ -2,7 +2,7 @@
 
 > **A bridge between complex science and gym practice.** An intelligent system for analyzing and evaluating the credibility of scientific research related to training, nutrition, and hypertrophy.
 
-> **Doc role.** This is the high-level **product context**. For implementation see [`FitSci - Development Plan.md`](./FitSci%20-%20Development%20Plan.md); for architecture see [`FitSci - Technical Architecture.md`](./FitSci%20-%20Technical%20Architecture.md); for everything else see [`INDEX.md`](./INDEX.md).
+> **Doc role.** This is the high-level **product context**. For implementation see [`FitSci - Development Plan.md`](../architecture/FitSci%20-%20Development%20Plan.md); for architecture see [`FitSci - Technical Architecture.md`](../architecture/FitSci%20-%20Technical%20Architecture.md); for everything else see [`INDEX.md`](../index/INDEX.md).
 
 ---
 
@@ -23,7 +23,7 @@ Instead of reading 20 pages of medical jargon, the user receives a compact verdi
 
 ## 3. How it Works (Architecture)
 
-The system follows **Hexagonal Architecture** ([ADR-0001](./adr/0001-architecture-hexagonal.md)). The domain core is pure Python; everything external is an adapter behind a port.
+The system follows **Hexagonal Architecture** ([ADR-0001](../adr/0001-architecture-hexagonal.md)). The domain core is pure Python; everything external is an adapter behind a port.
 
 ### A. Data extraction (M1 + M2)
 
@@ -44,7 +44,7 @@ The current implementation (v1, **0–14 scale**) is documented in [`scoring_bas
 * *"High-quality study — consider implementing this technique."*
 * *"Small sample size — treat as a curiosity; do not change your plan."*
 
-A future Phase 4 feature ([`audit-gemma4-features.md §2`](./audit/before-phase-0/audit-gemma4-features.md)) will fill the `summary_pl` / `summary_en` fields with NTS-style 3-sentence summaries via a 4B Gemma adapter.
+A future Phase 4 feature ([`audit-gemma4-features.md §2`](../audit/before-phase-0/audit-gemma4-features.md)) will fill the `summary_pl` / `summary_en` fields with NTS-style 3-sentence summaries via a 4B Gemma adapter.
 
 ## 4. Target Audience
 
@@ -66,7 +66,7 @@ Tracked in detail in `FitSci - Development Plan.md` Phase 4 and `audit-gemma4-fe
 
 ---
 
-## Technologies (locked — see [adr/](./adr/README.md))
+## Technologies (locked — see [adr/](../adr/README.md))
 
 | Layer | Choice |
 |---|---|
@@ -75,7 +75,7 @@ Tracked in detail in `FitSci - Development Plan.md` Phase 4 and `audit-gemma4-fe
 | Backend | **Python + FastAPI + Pydantic v2** |
 | Architecture | **Hexagonal (Ports & Adapters)** |
 | Database | **PostgreSQL 16+** with **JSONB-first** schema; `pgvector` reserved for v2 |
-| Frontend | **React (Vite + TypeScript)** with Bio-Signal aesthetic ([`Design.md`](./FitSci%20-%20Design.md)) |
+| Frontend | **React (Vite + TypeScript)** with Bio-Signal aesthetic ([`Design.md`](../design/FitSci%20-%20Design.md)) |
 | API contract | OpenAPI 3 → `openapi-typescript` codegen committed to the frontend repo |
 | Migrations | Alembic |
 
@@ -85,11 +85,11 @@ Tracked in detail in `FitSci - Development Plan.md` Phase 4 and `audit-gemma4-fe
 
 ## Development Resources
 
-Start at **[`docs/INDEX.md`](./INDEX.md)** for the full navigation map.
+Start at **[`docs/INDEX.md`](../index/INDEX.md)** for the full navigation map.
 
-* **Master plan:** [`FitSci - Development Plan.md`](./FitSci%20-%20Development%20Plan.md)
-* **Architecture:** [`FitSci - Technical Architecture.md`](./FitSci%20-%20Technical%20Architecture.md), [`FitSci - Directory Structure.md`](./FitSci%20-%20Directory%20Structure.md)
-* **Decisions:** [`adr/`](./adr/README.md)
+* **Master plan:** [`FitSci - Development Plan.md`](../architecture/FitSci%20-%20Development%20Plan.md)
+* **Architecture:** [`FitSci - Technical Architecture.md`](../architecture/FitSci%20-%20Technical%20Architecture.md), [`FitSci - Directory Structure.md`](../architecture/FitSci%20-%20Directory%20Structure.md)
+* **Decisions:** [`adr/`](../adr/README.md)
 
 ---
 

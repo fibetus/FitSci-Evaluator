@@ -6,10 +6,10 @@
 >
 > | Layer | Source of truth | Scale | Status |
 > |---|---|---|---|
-> | **v1 — implemented Rigor Index** | [`docs/scoring_basis.md`](./scoring_basis.md) | **0–14** | What `backend/src/domain/services/scoring.py` runs *today*. Authoritative for any reader who wants to know what the code does. |
+> | **v1 — implemented Rigor Index** | [`docs/other/scoring_basis.md`](./scoring_basis.md) | **0–14** | What `backend/src/domain/services/scoring.py` runs *today*. Authoritative for any reader who wants to know what the code does. |
 > | **v2 — conceptual Rigor Index** | this document, §1 | **0–20** | The PDF-grounded science target (MRI vs DEXA, Trained vs Untrained, Cohen's d, 95% CI). **Not yet implemented.** |
 >
-> **If `scoring_basis.md` and this document disagree, the implemented v1 spec wins for code; this document wins for the scientific roadmap.** The migration v1 → v2 is tracked in [`adr/0002-scoring-canonical-spec.md`](./adr/0002-scoring-canonical-spec.md).
+> **If `scoring_basis.md` and this document disagree, the implemented v1 spec wins for code; this document wins for the scientific roadmap.** The migration v1 → v2 is tracked in [`adr/0002-scoring-canonical-spec.md`](../adr/0002-scoring-canonical-spec.md).
 
 This document presents three specialized models for evaluating scientific research within the FitSci ecosystem.
 
@@ -115,4 +115,4 @@ The Judge is and remains deterministic. Gemma extracts and rephrases; the verdic
 
 *Referenced document: Badania naukowe w treningu siłowym: interpretacja*
 
-*Companion docs: [`scoring_basis.md`](./scoring_basis.md) (v1 implemented spec) · [`FitSci - Development Plan.md`](./FitSci%20-%20Development%20Plan.md) · [`adr/0002-scoring-canonical-spec.md`](./adr/0002-scoring-canonical-spec.md).*
+*Companion docs: [`scoring_basis.md`](./scoring_basis.md) (v1 implemented spec) · [`FitSci - Development Plan.md`](../architecture/FitSci%20-%20Development%20Plan.md) · [`adr/0002-scoring-canonical-spec.md`](../adr/0002-scoring-canonical-spec.md).*

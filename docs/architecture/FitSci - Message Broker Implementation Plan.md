@@ -2,7 +2,7 @@
 
 **Status:** Planned
 **Target Phase:** Phase 2 (Async API Integration)
-**Related ADR:** [ADR-0006](./adr/0006-message-broker-rabbitmq.md)
+**Related ADR:** [ADR-0006](../adr/0006-message-broker-rabbitmq.md)
 
 ## 1. Goal
 

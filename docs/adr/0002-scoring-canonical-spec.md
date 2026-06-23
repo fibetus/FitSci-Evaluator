@@ -3,7 +3,7 @@
 * **Status:** Accepted
 * **Date:** 2026-05-06
 * **Decision drivers:** spec/code drift surfaced in [`audit-architecture.md §3`](../audit/before-phase-0/audit-architecture.md); contributor confusion risk from two coexisting Rigor Index definitions.
-* **Related:** [`scoring_basis.md`](../scoring_basis.md), [`FitSci - Research Evaluation Model.md`](../FitSci%20-%20Research%20Evaluation%20Model.md).
+* **Related:** [`scoring_basis.md`](../other/scoring_basis.md), [`FitSci - Research Evaluation Model.md`](../other/FitSci%20-%20Research%20Evaluation%20Model.md).
 
 ## Context
 
@@ -29,7 +29,7 @@ A previous code reference to a missing `GEMINI.md` file made this worse. That re
 2. **`docs/FitSci - Research Evaluation Model.md` is the authoritative description of the long-term science target (v2).** It is explicitly labeled as "not yet implemented" in its header.
 3. **Code citations.** Any docstring in `backend/src/domain/services/scoring.py` that references a scoring spec **must** cite `scoring_basis.md`. No reference to `GEMINI.md`, `Research Evaluation Model.md`, or any other location.
 4. **Consistency rule (CI-enforced).** A PR that modifies `backend/src/domain/services/scoring.py` **must** also modify `docs/scoring_basis.md` in the same commit, or be explicitly labeled `[no-scoring-change]` in the commit body. Pre-commit hook + CI job enforce this.
-5. **Migration v1 → v2** is described in [`FitSci - Research Evaluation Model.md §1`](../FitSci%20-%20Research%20Evaluation%20Model.md): five-step plan ending in an `/api/v2/` cutover. v2 cannot ship until Phase 1 DoD 1.3 (≥80% field-level F1) is met for the new fields.
+5. **Migration v1 → v2** is described in [`FitSci - Research Evaluation Model.md §1`](../other/FitSci%20-%20Research%20Evaluation%20Model.md): five-step plan ending in an `/api/v2/` cutover. v2 cannot ship until Phase 1 DoD 1.3 (≥80% field-level F1) is met for the new fields.
 
 ## Alternatives considered
 

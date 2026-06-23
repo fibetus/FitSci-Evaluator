@@ -2,7 +2,7 @@
 
 > **Status (2026-05-16):** Phase 1 core pipeline is implemented. Items in `backend/src/` are marked ✅; future Phase 2–4 items are marked ⏳ / 📦.
 
-The directory follows **Hexagonal Architecture** ([ADR-0001](./adr/0001-architecture-hexagonal.md)): pure domain core, ports as `typing.Protocol` interfaces, adapters as the **only** modules permitted to import infrastructure libraries (`httpx`, `asyncpg`, `sqlalchemy`, `ollama`, `google.cloud.aiplatform`, ...).
+The directory follows **Hexagonal Architecture** ([ADR-0001](../adr/0001-architecture-hexagonal.md)): pure domain core, ports as `typing.Protocol` interfaces, adapters as the **only** modules permitted to import infrastructure libraries (`httpx`, `asyncpg`, `sqlalchemy`, `ollama`, `google.cloud.aiplatform`, ...).
 
 ```text
 fitsci-evaluator/
@@ -140,8 +140,8 @@ fitsci-evaluator/
 
 ## 1. How modularity works in this structure
 
-* **Replacing Gemma 4.** Swap the base adapter in `_build_evaluator()` (`cli/main.py`): `GemmaOllamaAdapter` → `GemmaVertexAIAdapter`. Keep `CachedEvaluator` and `MeteredEvaluator` decorators unchanged. The domain only depends on `EvaluatorPort` → `ExtractionResult`. See [ADR-0004](./adr/0004-gemma4-12b-q4km.md).
-* **Replacing the database.** Same pattern: swap `PostgresStudyRepository` for `InMemoryStudyRepository` (tests) or a future `SqliteStudyRepository`. See [ADR-0003](./adr/0003-database-postgres-jsonb.md).
+* **Replacing Gemma 4.** Swap the base adapter in `_build_evaluator()` (`cli/main.py`): `GemmaOllamaAdapter` → `GemmaVertexAIAdapter`. Keep `CachedEvaluator` and `MeteredEvaluator` decorators unchanged. The domain only depends on `EvaluatorPort` → `ExtractionResult`. See [ADR-0004](../adr/0004-gemma4-12b-q4km.md).
+* **Replacing the database.** Same pattern: swap `PostgresStudyRepository` for `InMemoryStudyRepository` (tests) or a future `SqliteStudyRepository`. See [ADR-0003](../adr/0003-database-postgres-jsonb.md).
 * **CLI-first development.** `backend/src/cli/main.py` constructs the same `EvaluateStudyUseCase` as the FastAPI controller. Anything that works in the CLI works in the API.
 * **Direct-to-Gemma path.** A use case can construct `GemmaOllamaAdapter` and `ScoringService` directly without touching the scrapers — useful for `text-in / verdict-out` workflows.
 
@@ -155,7 +155,7 @@ fitsci-evaluator/
 * `adapters/` may import: anything they need; this is where third-party SDKs live.
 * `cli/` and `main.py` (FastAPI) may import everything — they are the composition roots.
 
-The Pydantic-in-domain dependency is a deliberate exception (see [ADR-0001](./adr/0001-architecture-hexagonal.md)): Pydantic is acting as a domain-validation library, not as infrastructure.
+The Pydantic-in-domain dependency is a deliberate exception (see [ADR-0001](../adr/0001-architecture-hexagonal.md)): Pydantic is acting as a domain-validation library, not as infrastructure.
 
 ---
 
@@ -172,4 +172,4 @@ The Pydantic-in-domain dependency is a deliberate exception (see [ADR-0001](./ad
 
 ---
 
-*Companion documents: [`FitSci - Technical Architecture.md`](./FitSci%20-%20Technical%20Architecture.md) · [`FitSci - Development Plan.md`](./FitSci%20-%20Development%20Plan.md) · [`adr/0001-architecture-hexagonal.md`](./adr/0001-architecture-hexagonal.md).*
+*Companion documents: [`FitSci - Technical Architecture.md`](./FitSci%20-%20Technical%20Architecture.md) · [`FitSci - Development Plan.md`](./FitSci%20-%20Development%20Plan.md) · [`adr/0001-architecture-hexagonal.md`](../adr/0001-architecture-hexagonal.md).*

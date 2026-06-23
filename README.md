@@ -8,10 +8,10 @@
 
 ## Quick links
 
-* **Start here:** [docs/INDEX.md](./docs/INDEX.md) — full navigation map for every document in the repo.
-* **Master plan:** [docs/FitSci - Development Plan.md](./docs/FitSci%20-%20Development%20Plan.md) — phases, measurable DoDs, time-boxes, risks.
-* **Architecture:** [docs/FitSci - Technical Architecture.md](./docs/FitSci%20-%20Technical%20Architecture.md) · [docs/FitSci - Directory Structure.md](./docs/FitSci%20-%20Directory%20Structure.md) · [docs/adr/](./docs/adr/README.md).
-* **Scoring spec (v1, what runs):** [docs/scoring_basis.md](./docs/scoring_basis.md).
+* **Start here:** [docs/index/INDEX.md](./docs/index/INDEX.md) — full navigation map for every document in the repo.
+* **Master plan:** [docs/architecture/FitSci - Development Plan.md](./docs/architecture/FitSci%20-%20Development%20Plan.md) — phases, measurable DoDs, time-boxes, risks.
+* **Architecture:** [docs/architecture/FitSci - Technical Architecture.md](./docs/architecture/FitSci%20-%20Technical%20Architecture.md) · [docs/architecture/FitSci - Directory Structure.md](./docs/architecture/FitSci%20-%20Directory%20Structure.md) · [docs/adr/](./docs/adr/README.md).
+* **Scoring spec (v1, what runs):** [docs/other/scoring_basis.md](./docs/other/scoring_basis.md).
 * **Audit reports:** [docs/audit/](./docs/audit/README.md) (before Phase 0 and after Phase 1).
 
 ---
@@ -40,7 +40,7 @@ The Judge is **deterministic**. Gemma extracts; it never scores.
 
 ## 3. Architecture (Hexagonal — Ports & Adapters)
 
-The codebase is organized into a pure **domain core**, a thin **application** orchestration layer, and **adapters** for every external system. Decision recorded in [ADR-0001](./docs/adr/0001-architecture-hexagonal.md); full layout in [docs/FitSci - Directory Structure.md](./docs/FitSci%20-%20Directory%20Structure.md).
+The codebase is organized into a pure **domain core**, a thin **application** orchestration layer, and **adapters** for every external system. Decision recorded in [ADR-0001](./docs/adr/0001-architecture-hexagonal.md); full layout in [docs/architecture/FitSci - Directory Structure.md](./docs/architecture/FitSci%20-%20Directory%20Structure.md).
 
 * `backend/src/domain/` — Pydantic models (`Study`, `Population`, `Delta`, `Dosage`, `ScoreBreakdown`, `StudyFlags`), pure services (`ScoringService`), and `typing.Protocol` ports (`IngestorPort`, `EvaluatorPort`, `RepositoryPort`, `LoggerPort`, `ClockPort`).
 * `backend/src/application/use_cases/` — orchestrators (Phase 0: `EvaluateStudyUseCase` skeleton; Phase 1+ fills the workflow and adds read use cases).
@@ -49,13 +49,13 @@ The codebase is organized into a pure **domain core**, a thin **application** or
 
 ## 4. Scoring (v1 — what runs today)
 
-Documented in [docs/scoring_basis.md](./docs/scoring_basis.md). Bounded **Rigor Index 0–14** with deterministic `confidence` (0–100). Quality tiers: `high` (≥8) · `moderate` (5–7) · `rejected` (<5).
+Documented in [docs/other/scoring_basis.md](./docs/other/scoring_basis.md). Bounded **Rigor Index 0–14** with deterministic `confidence` (0–100). Quality tiers: `high` (≥8) · `moderate` (5–7) · `rejected` (<5).
 
-The **v2 conceptual model** (0–20, MRI-vs-DEXA, Cohen's d–first) is documented in [docs/FitSci - Research Evaluation Model.md](./docs/FitSci%20-%20Research%20Evaluation%20Model.md) as the long-term science target. Migration is gated on extraction accuracy proven in Phase 1; see [ADR-0002](./docs/adr/0002-scoring-canonical-spec.md).
+The **v2 conceptual model** (0–20, MRI-vs-DEXA, Cohen's d–first) is documented in [docs/other/FitSci - Research Evaluation Model.md](./docs/other/FitSci%20-%20Research%20Evaluation%20Model.md) as the long-term science target. Migration is gated on extraction accuracy proven in Phase 1; see [ADR-0002](./docs/adr/0002-scoring-canonical-spec.md).
 
 ## 5. Roadmap (summary)
 
-The full plan with measurable Definitions of Done, time-boxes, cross-cutting concerns, and risks is in [docs/FitSci - Development Plan.md](./docs/FitSci%20-%20Development%20Plan.md). At a glance:
+The full plan with measurable Definitions of Done, time-boxes, cross-cutting concerns, and risks is in [docs/architecture/FitSci - Development Plan.md](./docs/architecture/FitSci%20-%20Development%20Plan.md). At a glance:
 
 | Phase | Goal | Status | Budget |
 |---|---|---|---|
@@ -133,11 +133,11 @@ fitsci-evaluate PMC12345
 
 ## 9. Contributing
 
-1. **Read the docs first.** Start at [docs/INDEX.md](./docs/INDEX.md). Skim the audits in [docs/internal/audit/](./docs/internal/audit/audit-index.md) before opening a non-trivial PR.
+1. **Read the docs first.** Start at [docs/index/INDEX.md](./docs/index/INDEX.md). Skim the audits in [docs/audit/before-phase-0/audit-index.md](./docs/audit/before-phase-0/audit-index.md) before opening a non-trivial PR.
 2. **Domain stays pure.** No third-party imports inside `backend/src/domain/` (Pydantic is the deliberate exception).
 3. **Adapter discipline.** Wrap third-party exceptions into the `domain/errors.py` taxonomy; never leak SDK types upward.
 4. **Tests are not optional.** Every PR adds tests for any changed behavior. CI enforces coverage thresholds.
-5. **Scoring spec consistency.** Any change to `backend/src/domain/services/scoring.py` requires a touched `docs/scoring_basis.md` in the same commit ([ADR-0002](./docs/adr/0002-scoring-canonical-spec.md)).
+5. **Scoring spec consistency.** Any change to `backend/src/domain/services/scoring.py` requires a touched `docs/other/scoring_basis.md` in the same commit ([ADR-0002](./docs/adr/0002-scoring-canonical-spec.md)).
 6. **One port per responsibility.** New use case → new port → new adapter. Never widen `EvaluatorPort` to absorb new tasks.
 
 ## 10. License
@@ -146,4 +146,4 @@ See [LICENSE](./LICENSE).
 
 ---
 
-*Companion documents: [docs/INDEX.md](./docs/INDEX.md) · [docs/FitSci - Development Plan.md](./docs/FitSci%20-%20Development%20Plan.md) · [docs/FitSci - Risk Register.md](./docs/FitSci%20-%20Risk%20Register.md) · [docs/FitSci - Cross-Cutting Concerns.md](./docs/FitSci%20-%20Cross-Cutting%20Concerns.md).*
+*Companion documents: [docs/index/INDEX.md](./docs/index/INDEX.md) · [docs/architecture/FitSci - Development Plan.md](./docs/architecture/FitSci%20-%20Development%20Plan.md) · [docs/other/FitSci - Risk Register.md](./docs/other/FitSci%20-%20Risk%20Register.md) · [docs/architecture/FitSci - Cross-Cutting Concerns.md](./docs/architecture/FitSci%20-%20Cross-Cutting%20Concerns.md).*

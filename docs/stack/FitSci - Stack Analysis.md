@@ -1,6 +1,6 @@
 # FitSci - Stack Analysis & Path Forward
 
-> **Status (2026-05-06):** **Verdict locked — Hybrid stack chosen: Python (FastAPI) backend + React (Vite) frontend.** This document is preserved for the side-by-side comparison that produced the decision. The authoritative ADR is [`adr/0001-architecture-hexagonal.md`](./adr/0001-architecture-hexagonal.md). **Streamlit / Gradio / LangChain / LlamaIndex are explicitly out — do not reintroduce them.**
+> **Status (2026-05-06):** **Verdict locked — Hybrid stack chosen: Python (FastAPI) backend + React (Vite) frontend.** This document is preserved for the side-by-side comparison that produced the decision. The authoritative ADR is [`adr/0001-architecture-hexagonal.md`](../adr/0001-architecture-hexagonal.md). **Streamlit / Gradio / LangChain / LlamaIndex are explicitly out — do not reintroduce them.**
 
 This document evaluates the technological path for **FitSci - Evaluator**, comparing the prior MVP stack against the chosen Python-centric alternative.
 
@@ -24,7 +24,7 @@ This document evaluates the technological path for **FitSci - Evaluator**, compa
 * **AI ecosystem:** the entire Gemma 4 toolchain (Kaggle Hub, Transformers, Ollama, Vertex AI Python SDK) is Python-native.
 * **Integration:** the ingestor is Python; unifying behind one FastAPI app keeps the stack coherent.
 * **Speed:** FastAPI is fast enough; AI workflows benefit far more from Python ergonomics than from Node throughput.
-* **OpenAPI for free:** FastAPI emits OpenAPI 3 out of the box, which we feed into `openapi-typescript` for the React frontend (kills hand-synced type drift — see [`audit-architecture.md §4.3`](./audit/before-phase-0/audit-architecture.md)).
+* **OpenAPI for free:** FastAPI emits OpenAPI 3 out of the box, which we feed into `openapi-typescript` for the React frontend (kills hand-synced type drift — see [`audit-architecture.md §4.3`](../audit/before-phase-0/audit-architecture.md)).
 
 ---
 
@@ -34,19 +34,19 @@ A **headless architecture**:
 
 * **Backend:** Python (FastAPI). Gemma 4 inference, scoring, scraping pipeline.
 * **Frontend:** React (Vite). Communicates with the Python API via JSON; types are codegen'd from `/openapi.json`.
-* **Database:** PostgreSQL with JSONB-first schema. See [`adr/0003-database-postgres-jsonb.md`](./adr/0003-database-postgres-jsonb.md).
+* **Database:** PostgreSQL with JSONB-first schema. See [`adr/0003-database-postgres-jsonb.md`](../adr/0003-database-postgres-jsonb.md).
 
 ### Why this path
 
 1. **Don't throw away the gold.** The Bio-Signal UI is a major hackathon asset.
 2. **Logic where it belongs.** Python is the industry standard for LLM orchestration.
-3. **The 5-line LLM swap is real.** Switching from local Gemma (Ollama) to cloud Gemma (Vertex AI) means swapping `GemmaOllamaAdapter` for `GemmaVertexAIAdapter` in the composition root — see [`audit-gemma4-selection.md §3`](./audit/before-phase-0/audit-gemma4-selection.md).
+3. **The 5-line LLM swap is real.** Switching from local Gemma (Ollama) to cloud Gemma (Vertex AI) means swapping `GemmaOllamaAdapter` for `GemmaVertexAIAdapter` in the composition root — see [`audit-gemma4-selection.md §3`](../audit/before-phase-0/audit-gemma4-selection.md).
 
 ---
 
 ## 4. Roadmap recap (Inside-Out / CLI-to-UI)
 
-The phased plan below is summarized; the authoritative version (with measurable Definitions of Done, time-boxes, cross-cutting concerns, and a risk register) lives in [`FitSci - Development Plan.md`](./FitSci%20-%20Development%20Plan.md).
+The phased plan below is summarized; the authoritative version (with measurable Definitions of Done, time-boxes, cross-cutting concerns, and a risk register) lives in [`FitSci - Development Plan.md`](../architecture/FitSci%20-%20Development%20Plan.md).
 
 ### Phase 0 — Foundation (1 day)
 ADRs, doc reconciliation, application layer skeleton, `LoggerPort`/`ClockPort`, error taxonomy, CI bootstrap.
@@ -63,7 +63,7 @@ Real `PMCAdapter` + real `GemmaOllamaAdapter` + benchmark fixtures. **No mock da
 Codegen'd types from `/openapi.json`; mocks replaced with live calls; loading/empty/error states implemented; visual parity with the legacy app.
 
 ### Phase 4 — Fine-tuning + Feature Extensions (post-hackathon, 2–4 weeks)
-Gemma 4 12B QLoRA on a 5–10k curated dataset, deployed behind a `RoutingEvaluatorAdapter` for canary rollout. Six Gemma feature extensions (lay translator, p-hacking sniffer, comparator, myth-buster, citation triage, co-pilot). Full design in [`audit-finetuning-pipeline.md`](./audit/before-phase-0/audit-finetuning-pipeline.md) and [`audit-gemma4-features.md`](./audit/before-phase-0/audit-gemma4-features.md).
+Gemma 4 12B QLoRA on a 5–10k curated dataset, deployed behind a `RoutingEvaluatorAdapter` for canary rollout. Six Gemma feature extensions (lay translator, p-hacking sniffer, comparator, myth-buster, citation triage, co-pilot). Full design in [`audit-finetuning-pipeline.md`](../audit/before-phase-0/audit-finetuning-pipeline.md) and [`audit-gemma4-features.md`](../audit/before-phase-0/audit-gemma4-features.md).
 
 ---
 
@@ -78,4 +78,4 @@ This gives us: scientific power + visual impact + maintainable seams.
 
 ---
 
-*Companion documents: [`FitSci - Development Plan.md`](./FitSci%20-%20Development%20Plan.md) · [`FitSci - Technical Architecture.md`](./FitSci%20-%20Technical%20Architecture.md) · [`adr/`](./adr/README.md).*
+*Companion documents: [`FitSci - Development Plan.md`](../architecture/FitSci%20-%20Development%20Plan.md) · [`FitSci - Technical Architecture.md`](../architecture/FitSci%20-%20Technical%20Architecture.md) · [`adr/`](../adr/README.md).*
