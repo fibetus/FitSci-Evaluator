@@ -3,7 +3,7 @@
 # Quick start (infra only, app on host):
 #   cp .env.example .env
 #   docker compose up -d
-#   cd backend && alembic upgrade head && pytest
+#   cd backend && uv sync && uv run alembic upgrade head && uv run pytest -m "not integration"
 #
 # Full stack (API in Docker):
 #   docker compose --profile app up -d --build
@@ -112,6 +112,29 @@ services:
         "--port",
         "8000",
       ]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+  worker:
+    profiles: ["app"]
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: "5672"
+      OLLAMA_BASE_URL: http://ollama:11434
+    command: ["python", "-m", "src.worker.main"]
     depends_on:
       postgres:
         condition: service_healthy

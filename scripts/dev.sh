@@ -20,9 +20,9 @@ case "$CMD" in
 
 [*] Infra running. Next steps:
     cd backend
-    pip install -r requirements.txt
-    alembic upgrade head
-    pytest
+    uv sync
+    uv run alembic upgrade head
+    uv run pytest -m "not integration"
 
     Pull Gemma model: ./scripts/dev.sh pull-model
     API in Docker:    docker compose --profile app up -d --build
@@ -36,7 +36,7 @@ EOF
     docker compose logs -f postgres rabbitmq ollama
     ;;
   migrate)
-    (cd backend && alembic upgrade head)
+    (cd backend && uv run alembic upgrade head)
     ;;
   pull-model)
     MODEL="$(grep -E '^GEMMA_MODEL_TAG=' .env | cut -d= -f2- || true)"

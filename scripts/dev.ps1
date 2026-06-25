@@ -23,9 +23,9 @@ switch ($Command) {
         Write-Host ""
         Write-Host "[*] Infra running. Next steps:"
         Write-Host "    cd backend"
-        Write-Host "    pip install -r requirements.txt"
-        Write-Host "    alembic upgrade head"
-        Write-Host "    pytest"
+        Write-Host "    uv sync"
+        Write-Host "    uv run alembic upgrade head"
+        Write-Host "    uv run pytest -m `"not integration`""
         Write-Host ""
         Write-Host "    Pull Gemma model: ./scripts/dev.ps1 pull-model"
         Write-Host "    API in Docker:    docker compose --profile app up -d --build"
@@ -39,7 +39,7 @@ switch ($Command) {
     }
     "migrate" {
         Push-Location backend
-        alembic upgrade head
+        uv run alembic upgrade head
         Pop-Location
     }
     "pull-model" {

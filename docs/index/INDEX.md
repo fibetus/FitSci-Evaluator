@@ -1,6 +1,6 @@
 # FitSci - Documentation Index
 
-**Last updated:** 2026-06-24
+**Last updated:** 2026-06-26
 **Purpose:** one-page navigation map. If you are reading this for the first time, follow the **Reading Order** in §1.
 
 ---
@@ -68,6 +68,8 @@ If you are debugging or extending a specific area, jump straight to the matching
 | [0004](../adr/0004-gemma4-12b-q4km.md) | Gemma 4 12B Q4_K_M for production; 4B for CI/dev | Accepted | 2026-05-06 | Ollama (local/CI) ↔ Vertex AI (prod); 12B is the smallest variant reliably emitting nested 30-field JSON |
 | [0005](../adr/0005-extraction-accuracy-f1-metric.md) | Extraction Accuracy F1 Metric | Accepted | 2026-05-10 | Flattened structural F1 metric computing partial matches for lists and strings |
 | [0006](../adr/0006-message-broker-rabbitmq.md) | Message Broker for Asynchronous LLM Evaluation | Accepted | 2026-06-24 | RabbitMQ chosen to decouple FastAPI requests from heavy Ollama inference via background worker queue |
+| [0007](../adr/0007-infra-orchestration-docker-compose.md) | Orchestrate infrastructure with Docker Compose | Accepted | 2026-06-26 | Single compose file (profiles + healthchecks) runs Postgres, RabbitMQ, Ollama for local and single-VPS; app on host or in-container |
+| [0008](../adr/0008-dependency-management-uv.md) | Adopt uv; retire Poetry and requirements.txt | Accepted | 2026-06-26 | One PEP 621 manifest + committed `uv.lock` + pinned 3.11; Dockerfile/CI use `uv sync --frozen`; faster, reproducible installs |
 
 ADR README and template guidance: [adr/README.md](../adr/README.md).
 
@@ -118,6 +120,8 @@ ADR README and template guidance: [adr/README.md](../adr/README.md).
 | **What can go wrong?** | [Risk Register.md](../other/FitSci%20-%20Risk%20Register.md) | [audit-development-plan.md §4](../audit/before-phase-0/audit-development-plan.md) |
 | **Bio-Signal UI aesthetic** | [Design.md](../design/FitSci%20-%20Design.md) | — |
 | **Asynchronous message processing** | [ADR-0006](../adr/0006-message-broker-rabbitmq.md) | [Message Broker Implementation Plan.md](../architecture/FitSci%20-%20Message%20Broker%20Implementation%20Plan.md) |
+| **How is infrastructure run (Postgres/RabbitMQ/Ollama)?** | [ADR-0007](../adr/0007-infra-orchestration-docker-compose.md) | `docker-compose.yml`, `scripts/dev.sh` / `scripts/dev.ps1` |
+| **How are Python dependencies managed?** | [ADR-0008](../adr/0008-dependency-management-uv.md) | `backend/pyproject.toml`, `backend/uv.lock`, `backend/Dockerfile` |
 
 ---
 
