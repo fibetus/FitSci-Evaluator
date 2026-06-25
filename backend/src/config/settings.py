@@ -97,6 +97,8 @@ class Settings:
     log_level: str
     rate_limit_per_minute: int
     ncbi_api_key: str | None
+    rabbitmq_evaluation_queue: str
+    evaluation_idempotency_hours: int
 
     @classmethod
     def from_env(cls) -> Settings:
@@ -122,6 +124,12 @@ class Settings:
             log_level=os.getenv("LOG_LEVEL", "INFO"),
             rate_limit_per_minute=int(os.getenv("RATE_LIMIT_PER_MINUTE", "30")),
             ncbi_api_key=os.getenv("NCBI_API_KEY") or None,
+            rabbitmq_evaluation_queue=os.getenv(
+                "RABBITMQ_EVALUATION_QUEUE", "fitsci.evaluation.jobs"
+            ),
+            evaluation_idempotency_hours=int(
+                os.getenv("EVALUATION_IDEMPOTENCY_HOURS", "24")
+            ),
         )
 
 
