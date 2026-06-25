@@ -14,6 +14,12 @@ pydantic = "^2.0.0"
 fastapi = "^0.100.0"
 uvicorn = "^0.22.0"
 sqlmodel = "^0.0.8"
+sqlalchemy = { version = "^2.0.0", extras = ["asyncio"] }
+asyncpg = "^0.29.0"
+psycopg = { version = "^3.1.0", extras = ["binary"] }
+alembic = "^1.13.0"
+greenlet = "^3.0.0"
+aio-pika = "^9.4.0"
 httpx = "^0.24.0"
 python-dotenv = "^1.0.0"
 pymupdf = "^1.22.0"
@@ -23,6 +29,8 @@ pytest = "^8.0.0"
 pytest-cov = "^5.0.0"
 ruff = "^0.5.0"
 mypy = "^1.10.0"
+testcontainers = { version = "^4.0.0", extras = ["postgres"] }
+pytest-asyncio = "^0.24.0"
 
 [tool.ruff]
 line-length = 100
@@ -39,10 +47,11 @@ plugins = ["pydantic.mypy"]
 branch = true
 source = ["src"]
 
-[tool.coverage.report]
-fail_under = 80
-show_missing = true
-skip_empty = true
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+markers = [
+    "integration: tests that require Docker / external services",
+]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
