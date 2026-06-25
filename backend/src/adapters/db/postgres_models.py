@@ -34,3 +34,23 @@ class StudyRow(Base):
         server_default=func.now(),
         onupdate=func.now(),
     )
+
+
+class EvaluationJobRow(Base):
+    __tablename__ = "evaluation_jobs"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    pmc_id: Mapped[str] = mapped_column(String, nullable=False, index=True)
+    status: Mapped[str] = mapped_column(String, nullable=False)
+    error_message: Mapped[str | None] = mapped_column(String, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
