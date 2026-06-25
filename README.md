@@ -71,10 +71,60 @@ The full plan with measurable Definitions of Done, time-boxes, cross-cutting con
 ### Prerequisites
 
 * Python 3.11+
-* (Phase 1+) [Ollama](https://ollama.com/) running locally with `gemma4:12b-q4_k_m` (or `:4b-q4_k_m` on weak hardware)
-* (Phase 2+) Docker (for PostgreSQL via testcontainers) **or** a local PostgreSQL 16+ instance
+* [Docker](https://www.docker.com/) (recommended — runs PostgreSQL, RabbitMQ, and Ollama)
+* [Ollama](https://ollama.com/) — only if you run the LLM outside Docker
 
-### Run the existing CLI (mock-data MVP)
+### Quick start (Docker infra + app on host)
+
+From the repository root:
+
+```bash
+cp .env.example .env
+./scripts/dev.sh up          # Windows: ./scripts/dev.ps1 up
+./scripts/dev.sh pull-model  # download GEMMA_MODEL_TAG into Ollama
+cd backend
+pip install -r requirements.txt
+alembic upgrade head
+python -m pytest --cov --cov-report=term-missing -m "not integration"
+```
+
+Integration tests (Postgres via testcontainers — requires Docker):
+
+```bash
+FITSCI_INTEGRATION=1 python -m pytest -m integration
+```
+
+### Full stack in Docker (API + migrations)
+
+```bash
+docker compose --profile app up -d --build
+curl http://localhost:8000/healthz
+curl http://localhost:8000/readyz
+```
+
+Services:
+
+| Service | Default URL | Notes |
+|---|---|---|
+| PostgreSQL | `localhost:5432` | user/db/password: `fitsci` |
+| RabbitMQ | `localhost:5672` | management UI: `http://localhost:15672` |
+| Ollama | `http://localhost:11434` | pull model via `./scripts/dev.sh pull-model` |
+| API | `http://localhost:8000` | `--profile app` only |
+
+### VPS deployment
+
+Set `FITSCI_DEPLOYMENT=vps` in `.env` and point component hosts at your server (or use full `POSTGRES_DSN` / `RABBITMQ_URL`):
+
+```env
+FITSCI_DEPLOYMENT=vps
+POSTGRES_HOST=203.0.113.50
+RABBITMQ_HOST=203.0.113.50
+OLLAMA_BASE_URL=http://203.0.113.50:11434
+```
+
+Run `docker compose` on the VPS for infra, or connect a locally running backend to remote services using the same variables.
+
+### Run the CLI
 
 From the `backend` directory:
 
