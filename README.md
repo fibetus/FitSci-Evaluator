@@ -78,20 +78,22 @@ The full plan with measurable Definitions of Done, time-boxes, cross-cutting con
 
 From the repository root:
 
+Dependencies are managed with [uv](https://docs.astral.sh/uv/) (install: `pipx install uv` or `curl -LsSf https://astral.sh/uv/install.sh | sh`).
+
 ```bash
 cp .env.example .env
 ./scripts/dev.sh up          # Windows: ./scripts/dev.ps1 up
 ./scripts/dev.sh pull-model  # download GEMMA_MODEL_TAG into Ollama
 cd backend
-pip install -r requirements.txt
-alembic upgrade head
-python -m pytest --cov --cov-report=term-missing -m "not integration"
+uv sync                      # creates .venv and installs deps from uv.lock
+uv run alembic upgrade head
+uv run pytest --cov --cov-report=term-missing -m "not integration"
 ```
 
-Integration tests (Postgres via testcontainers — requires Docker):
+Integration tests (Postgres + RabbitMQ via testcontainers — requires Docker):
 
 ```bash
-FITSCI_INTEGRATION=1 python -m pytest -m integration
+FITSCI_INTEGRATION=1 uv run pytest -m integration
 ```
 
 ### Full stack in Docker (API + migrations)
@@ -129,9 +131,9 @@ Run `docker compose` on the VPS for infra, or connect a locally running backend 
 From the `backend` directory:
 
 ```bash
-pip install -r requirements.txt
-python -m pytest --cov --cov-report=term-missing
-python -m src.cli.main PMC12345
+uv sync
+uv run pytest --cov --cov-report=term-missing
+uv run python -m src.cli.main PMC12345
 ```
 
 ### Git hooks (scoring spec guard)
@@ -147,15 +149,8 @@ The pre-commit hook blocks commits that change `backend/src/domain/services/scor
 ### Console script
 
 ```bash
-pip install -e .
-fitsci-evaluate PMC12345
-```
-
-Or with Poetry:
-
-```bash
-poetry install
-fitsci-evaluate PMC12345
+uv sync
+uv run fitsci-evaluate PMC12345
 ```
 
 > **Note (current state):** Phase 1 is complete. The CLI now uses real components (`EvaluateStudyUseCase`, `PMCAdapter`, `GemmaOllamaAdapter`) connecting to PMC and Ollama. Use the `--mock` flag to run the legacy hardcoded mock offline.
