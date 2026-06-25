@@ -29,6 +29,8 @@ def test_settings_local_defaults(monkeypatch) -> None:
     monkeypatch.delenv("RABBITMQ_URL", raising=False)
     monkeypatch.setenv("FITSCI_DEPLOYMENT", "local")
     monkeypatch.delenv("OLLAMA_BASE_URL", raising=False)
+    monkeypatch.setenv("RABBITMQ_EVALUATION_QUEUE", "fitsci.evaluation.jobs")
+    monkeypatch.setenv("EVALUATION_IDEMPOTENCY_HOURS", "24")
 
     settings = Settings.from_env()
     assert settings.deployment == "local"

@@ -56,6 +56,8 @@ def postgres_settings() -> Settings:
             log_level="INFO",
             rate_limit_per_minute=30,
             ncbi_api_key=None,
+            rabbitmq_evaluation_queue="fitsci.evaluation.jobs",
+            evaluation_idempotency_hours=24,
         )
 
 
