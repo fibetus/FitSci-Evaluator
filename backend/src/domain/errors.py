@@ -24,3 +24,11 @@ class RepositoryError(FitSciError):
 
 class ConfigurationError(FitSciError):
     """Raised when startup configuration is missing or invalid."""
+
+
+class QueueError(FitSciError):
+    """Raised when a message broker cannot publish or consume messages."""
+
+
+class JobNotFoundError(FitSciError):
+    """Raised when a job record does not exist."""
