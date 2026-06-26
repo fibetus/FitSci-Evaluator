@@ -71,17 +71,69 @@ The full plan with measurable Definitions of Done, time-boxes, cross-cutting con
 ### Prerequisites
 
 * Python 3.11+
-* (Phase 1+) [Ollama](https://ollama.com/) running locally with `gemma4:12b-q4_k_m` (or `:4b-q4_k_m` on weak hardware)
-* (Phase 2+) Docker (for PostgreSQL via testcontainers) **or** a local PostgreSQL 16+ instance
+* [Docker](https://www.docker.com/) (recommended — runs PostgreSQL, RabbitMQ, and Ollama)
+* [Ollama](https://ollama.com/) — only if you run the LLM outside Docker
 
-### Run the existing CLI (mock-data MVP)
+### Quick start (Docker infra + app on host)
+
+From the repository root:
+
+Dependencies are managed with [uv](https://docs.astral.sh/uv/) (install: `pipx install uv` or `curl -LsSf https://astral.sh/uv/install.sh | sh`).
+
+```bash
+cp .env.example .env
+./scripts/dev.sh up          # Windows: ./scripts/dev.ps1 up
+./scripts/dev.sh pull-model  # download GEMMA_MODEL_TAG into Ollama
+cd backend
+uv sync                      # creates .venv and installs deps from uv.lock
+uv run alembic upgrade head
+uv run pytest --cov --cov-report=term-missing -m "not integration"
+```
+
+Integration tests (Postgres + RabbitMQ via testcontainers — requires Docker):
+
+```bash
+FITSCI_INTEGRATION=1 uv run pytest -m integration
+```
+
+### Full stack in Docker (API + migrations)
+
+```bash
+docker compose --profile app up -d --build
+curl http://localhost:8000/healthz
+curl http://localhost:8000/readyz
+```
+
+Services:
+
+| Service | Default URL | Notes |
+|---|---|---|
+| PostgreSQL | `localhost:5432` | user/db/password: `fitsci` |
+| RabbitMQ | `localhost:5672` | management UI: `http://localhost:15672` |
+| Ollama | `http://localhost:11434` | pull model via `./scripts/dev.sh pull-model` |
+| API | `http://localhost:8000` | `--profile app` only |
+
+### VPS deployment
+
+Set `FITSCI_DEPLOYMENT=vps` in `.env` and point component hosts at your server (or use full `POSTGRES_DSN` / `RABBITMQ_URL`):
+
+```env
+FITSCI_DEPLOYMENT=vps
+POSTGRES_HOST=203.0.113.50
+RABBITMQ_HOST=203.0.113.50
+OLLAMA_BASE_URL=http://203.0.113.50:11434
+```
+
+Run `docker compose` on the VPS for infra, or connect a locally running backend to remote services using the same variables.
+
+### Run the CLI
 
 From the `backend` directory:
 
 ```bash
-pip install -r requirements.txt
-python -m pytest --cov --cov-report=term-missing
-python -m src.cli.main PMC12345
+uv sync
+uv run pytest --cov --cov-report=term-missing
+uv run python -m src.cli.main PMC12345
 ```
 
 ### Git hooks (scoring spec guard)
@@ -97,15 +149,8 @@ The pre-commit hook blocks commits that change `backend/src/domain/services/scor
 ### Console script
 
 ```bash
-pip install -e .
-fitsci-evaluate PMC12345
-```
-
-Or with Poetry:
-
-```bash
-poetry install
-fitsci-evaluate PMC12345
+uv sync
+uv run fitsci-evaluate PMC12345
 ```
 
 > **Note (current state):** Phase 1 is complete. The CLI now uses real components (`EvaluateStudyUseCase`, `PMCAdapter`, `GemmaOllamaAdapter`) connecting to PMC and Ollama. Use the `--mock` flag to run the legacy hardcoded mock offline.

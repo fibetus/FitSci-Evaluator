@@ -1,6 +1,6 @@
 # FitSci - Message Broker Implementation Plan (RabbitMQ)
 
-**Status:** Planned
+**Status:** Implemented (Phase 2)
 **Target Phase:** Phase 2 (Async API Integration)
 **Related ADR:** [ADR-0006](../adr/0006-message-broker-rabbitmq.md)
 
@@ -59,9 +59,29 @@ We need a new standalone application root (e.g., `backend/src/worker/main.py`) t
 
 ## 4. Testing Strategy
 
-1. **Unit Tests:** Mock `MessageQueuePort` in the FastAPI endpoint tests to ensure messages are dispatched.
-2. **Integration Tests:** Use `testcontainers-rabbitmq` (or a local Docker instance) to test the `RabbitMQAdapter`'s publish and consume logic end-to-end.
-3. **Resilience Testing:** Kill the worker process mid-evaluation and verify the message is redelivered when the worker restarts.
+1. **Unit Tests:** `MessageQueuePort` is faked with `InMemoryMessageQueue` in the
+   endpoint/use-case tests (`test_api_evaluate.py`, `test_submit_evaluation.py`,
+   `test_process_evaluation_job.py`) to assert messages are dispatched and job
+   state transitions are correct. These run in CI on every push.
+2. **Integration Tests:** `testcontainers[rabbitmq]` spins up a real
+   `rabbitmq:3.13-management-alpine` to test the `RabbitMQAdapter` publish/consume
+   roundtrip (`tests/integration/test_rabbitmq_adapter.py`).
+3. **Resilience Testing:** Two cases are covered without restarting the process:
+   - `test_rabbitmq_requeues_on_transient_failure` — a handler that raises is
+     nacked + requeued and redelivered to the still-running consumer until it
+     succeeds.
+   - `test_rabbitmq_drops_malformed_message_without_requeue_loop` — a poison
+     (non-JSON) message is rejected without requeue, so it cannot hot-loop.
+4. **End-to-end:** `tests/integration/test_evaluate_e2e.py` drives the real
+   `HTTP POST -> RabbitMQ -> Worker -> Postgres -> HTTP GET` chain with real broker
+   and database containers. The LLM (Ollama/Gemma) is faked here on purpose — the
+   broker DoD is about async plumbing; extraction quality is verified by the
+   benchmark harness and `GemmaOllamaAdapter` unit tests.
+
+> **Gating note:** All integration/e2e tests require Docker and are skipped unless
+> `FITSCI_INTEGRATION=1`. CI currently runs `-m "not integration"`, so these are
+> *not* executed on every push yet — they must be run manually (or in a dedicated
+> Docker-enabled CI job) before declaring the phase verified.
 
 ## 5. Infrastructure & Deployment
 
@@ -70,9 +90,17 @@ We need a new standalone application root (e.g., `backend/src/worker/main.py`) t
 3. **Worker Service:** The deployment configuration (e.g., systemd or docker-compose) must now run two services for the backend: `api` (FastAPI) and `worker` (Consumer).
 
 ## 6. Definition of Done
-- [ ] `ADR-0006` is merged and accepted.
-- [ ] `MessageQueuePort` is defined.
-- [ ] `RabbitMQAdapter` is implemented and unit tested.
-- [ ] Separate `worker` entrypoint is created and can consume messages.
-- [ ] FastAPI `POST /evaluate` pushes messages instead of running inference directly.
-- [ ] End-to-end integration test passes: HTTP POST -> RabbitMQ -> Worker -> Postgres -> HTTP GET results.
+- [x] `ADR-0006` is merged and accepted.
+- [x] `MessageQueuePort` is defined.
+- [x] `RabbitMQAdapter` is implemented, with an integration roundtrip test and
+      resilience (requeue / poison-message) tests.
+- [x] Separate `worker` entrypoint is created and can consume messages.
+- [x] FastAPI `POST /evaluate` pushes messages instead of running inference directly.
+- [x] End-to-end integration test exists: HTTP POST -> RabbitMQ -> Worker -> Postgres
+      -> HTTP GET (`tests/integration/test_evaluate_e2e.py`, LLM faked).
+
+> **Honesty note (2026-06-26 audit):** the integration/e2e tests above are
+> Docker-gated (`FITSCI_INTEGRATION=1`) and do **not** run in the default CI job
+> (`-m "not integration"`). To call Phase 2 *verified* rather than merely
+> *implemented*, run the full integration suite against Docker (locally or in a
+> dedicated CI job) and record the result.
