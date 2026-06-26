@@ -33,7 +33,7 @@ truth for infrastructure topology.
 ### Services and pinned images
 - `postgres` → `postgres:16-alpine`
 - `rabbitmq` → `rabbitmq:3.13-management-alpine` (management UI included)
-- `ollama` → `ollama/ollama:latest`
+- `ollama` → `ollama/ollama:0.30.10`
 - `migrate`, `api`, `worker` → built from `backend/Dockerfile` (the application)
 
 ### Profiles separate "infra" from "app"
@@ -78,8 +78,8 @@ compose network; `vps` points the host vars at a remote server. Named volumes
 - Health gating removes connect-before-ready races for API and worker.
 - One file works for both local and VPS by changing env vars only.
 - testcontainers-based integration tests reuse the same pinned images
-  (`postgres:16-alpine`, `rabbitmq:3.13-management-alpine`), keeping test infra
-  faithful to runtime.
+  (`postgres:16-alpine`, `rabbitmq:3.13-management-alpine`; Ollama uses the same
+  `ollama/ollama:0.30.10` tag via compose), keeping test infra faithful to runtime.
 
 **Negative / trade-offs**
 - The `ollama` container is **not** GPU-accelerated by default; on a GPU VPS you
