@@ -42,15 +42,17 @@ async def readyz(response: Response) -> dict[str, object]:
     settings = get_settings()
     checks: dict[str, object] = {}
 
-    engine = create_engine(settings)
+    engine = None
     try:
+        engine = create_engine(settings)
         async with engine.connect() as conn:
             await conn.execute(text("SELECT 1"))
         checks["postgres"] = "ok"
-    except SQLAlchemyError:
+    except Exception:
         checks["postgres"] = "error"
     finally:
-        await engine.dispose()
+        if engine is not None:
+            await engine.dispose()
 
     try:
         probe = RabbitMQAdapter(
