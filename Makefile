@@ -19,10 +19,10 @@ status:
 	@./scripts/dev.sh status
 
 test:
-	cd backend && python -m pytest --cov --cov-report=term-missing -m "not integration"
+	cd backend && uv run pytest --cov --cov-report=term-missing -m "not integration"
 
 integration:
-	cd backend && FITSCI_INTEGRATION=1 python -m pytest -m integration
+	cd backend && FITSCI_INTEGRATION=1 uv run pytest -m integration
 
 app:
 	docker compose --profile app up -d --build
