@@ -8,7 +8,6 @@ from typing import AsyncIterator
 import httpx
 from fastapi import FastAPI, Response
 from sqlalchemy import text
-from sqlalchemy.exc import SQLAlchemyError
 
 from .adapters.api.v1.router import router as v1_router
 from .adapters.broker.rabbitmq_adapter import RabbitMQAdapter

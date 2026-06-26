@@ -86,6 +86,7 @@ class PostgresJobRepository(JobRepositoryPort):
                     raise RepositoryError(f"Job {job_id} not found")
                 await session.execute(stmt)
                 await session.commit()
+        except SQLAlchemyError as exc:
             raise RepositoryError(f"Failed to update job {job_id}") from exc
 
 
