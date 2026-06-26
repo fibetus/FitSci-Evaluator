@@ -81,9 +81,11 @@ class PostgresJobRepository(JobRepositoryPort):
         )
         try:
             async with self._session_factory() as session:
+                existing = await session.get(EvaluationJobRow, job_id)
+                if existing is None:
+                    raise RepositoryError(f"Job {job_id} not found")
                 await session.execute(stmt)
                 await session.commit()
-        except SQLAlchemyError as exc:
             raise RepositoryError(f"Failed to update job {job_id}") from exc
 
 
