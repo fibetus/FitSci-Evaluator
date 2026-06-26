@@ -26,7 +26,7 @@ class SubmitEvaluationUseCase:
             pmc_id,
             within=self.idempotency_window,
         )
-        if existing is not None:
+        if existing is not None and existing.status != "failed":
             log.info("evaluation_job_idempotent_hit", job_id=existing.id)
             return existing
 
@@ -40,8 +40,17 @@ class SubmitEvaluationUseCase:
 
         try:
             await self.queue.publish_evaluation_job(job.id, pmc_id)
-        except QueueError:
+        except QueueError as exc:
             log.error("evaluation_job_publish_failed", job_id=job.id)
+            try:
+                await self.jobs.update_status(
+                    job.id,
+                    "failed",
+                    error_message=str(exc),
+                    updated_at=self.clock.now(),
+                )
+            except RepositoryError:
+                log.error("evaluation_job_mark_failed_failed", job_id=job.id)
             raise
 
         log.info("evaluation_job_submitted", job_id=job.id)
